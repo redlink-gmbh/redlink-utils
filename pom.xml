@@ -28,6 +28,7 @@
 
     <name>redlink-utils</name>
     <description>Assortment of useful Utils</description>
+    <url>https://github.com/redlink-gmbh/redlink-utils</url>
     <inceptionYear>2016</inceptionYear>
 
     <organization>
@@ -102,6 +103,12 @@
             <version>2.5</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-simple</artifactId>
+            <version>1.7.23</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>
@@ -154,5 +161,51 @@
                 </configuration>
             </plugin>
         </plugins>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-release-plugin</artifactId>
+                    <version>2.5.3</version>
+                    <configuration>
+                        <pushChanges>false</pushChanges>
+                        <autoVersionSubmodules>true</autoVersionSubmodules>
+                        <tagNameFormat>redlink-utils-v@{project.version}</tagNameFormat>
+                        <localCheckout>true</localCheckout>
+                        <connectionUrl>scm:git:file://${project.basedir}/</connectionUrl>
+                        <indentSize>4</indentSize>
+
+                        <useReleaseProfile>false</useReleaseProfile>
+                        <releaseProfiles>release</releaseProfiles>
+                        <goals>deploy</goals>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
     </build>
+
+    <profiles>
+        <profile>
+            <id>release</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                        <version>1.5</version>
+                        <executions>
+                            <execution>
+                                <id>sign-artifacts</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>sign</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+
 </project>
