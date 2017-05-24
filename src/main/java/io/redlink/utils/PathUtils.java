@@ -151,7 +151,7 @@ public class PathUtils {
             final CopyOption[] options = (preserve) ?
                     new CopyOption[] { COPY_ATTRIBUTES } : new CopyOption[0];
 
-            final Path newdir = target.resolve(source.relativize(dir));
+            final Path newdir = target.resolve(source.relativize(dir).toString());
             try {
                 Files.copy(dir, newdir, options);
             } catch (FileAlreadyExistsException ignore) {}
@@ -160,7 +160,7 @@ public class PathUtils {
 
         @Override
         public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-            final Path dest = target.resolve(source.relativize(file));
+            final Path dest = target.resolve(source.relativize(file).toString());
 
             PathUtils.doCopy(file, dest, preserve, false);
             return CONTINUE;
@@ -169,9 +169,9 @@ public class PathUtils {
         @Override
         public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
             if (exc == null && preserve) {
-                Path newdir = target.resolve(source.relativize(dir));
-                FileTime time = Files.getLastModifiedTime(dir);
-                Files.setLastModifiedTime(newdir, time);
+                final Path newDir = target.resolve(source.relativize(dir).toString());
+                final FileTime time = Files.getLastModifiedTime(dir);
+                Files.setLastModifiedTime(newDir, time);
             }
             return CONTINUE;
         }
