@@ -39,9 +39,7 @@ public class ResourceLoaderUtils {
      *
      * @param name The resource name
      * @return a {@link Path}, or {@code null} if no resource with this name is found.
-     * @deprecated not really deprecated but untested!!!
      */
-    @Deprecated
     public static Path getResourceAsPath(String name) {
         return getResourceAsPath(name, Thread.currentThread().getContextClassLoader());
     }
@@ -62,9 +60,7 @@ public class ResourceLoaderUtils {
      * @param name The resource name
      * @param classLoader The {@link ClassLoader} to use (see {@link ClassLoader#getResource(String)}
      * @return a {@link Path}, or {@code null} if no resource with this name is found.
-     * @deprecated not really deprecated but untested!!!
      */
-    @Deprecated
     public static Path getResourceAsPath(String name, ClassLoader classLoader) {
         return getResourceAsPath(classLoader.getResource(name));
     }

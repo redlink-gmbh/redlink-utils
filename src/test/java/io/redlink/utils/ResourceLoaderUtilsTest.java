@@ -17,6 +17,7 @@
 package io.redlink.utils;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.Assume;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -27,6 +28,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
 
+import static org.apache.commons.lang3.StringUtils.prependIfMissing;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
@@ -55,12 +57,57 @@ public class ResourceLoaderUtilsTest {
         Assume.assumeNotNull("Could not read resource the classic way",
                 ResourceLoaderUtilsTest.class.getResource(resource));
         final Path resourceAsPath = ResourceLoaderUtils.getResourceAsPath(resource, ResourceLoaderUtilsTest.class);
-        assertNotNull("getResourceAsPath() returned null",
-                resourceAsPath);
+        assertNotNull("getResourceAsPath() returned null", resourceAsPath);
 
         try (
                 InputStream expected = ResourceLoaderUtilsTest.class.getResourceAsStream(resource);
-                InputStream real =Files.newInputStream(ResourceLoaderUtils.getResourceAsPath(resource, ResourceLoaderUtilsTest.class))
+                InputStream real =Files.newInputStream(resourceAsPath)
+        ) {
+            assertTrue("content differs!", IOUtils.contentEquals(expected, real));
+        }
+    }
+
+    @Test
+    public void testGetResourceAsPath_ClassLoader() throws Exception {
+        final String resource;
+        if (StringUtils.startsWith(this.resource, "/")) {
+            resource = this.resource.substring(1);
+        } else {
+            resource = prependIfMissing(this.resource, this.getClass().getPackage().getName().replace('.', '/') + "/");
+        }
+
+        Assume.assumeNotNull("Could not read resource the classic way",
+                ClassLoader.getSystemClassLoader().getResource(resource));
+
+        final Path resourceAsPath = ResourceLoaderUtils.getResourceAsPath(resource, ClassLoader.getSystemClassLoader());
+        assertNotNull("getResourceAsPath() returned null", resourceAsPath);
+
+        try (
+                InputStream expected = ClassLoader.getSystemClassLoader().getResourceAsStream(resource);
+                InputStream real = Files.newInputStream(resourceAsPath)
+        ) {
+            assertTrue("content differs!", IOUtils.contentEquals(expected, real));
+        }
+    }
+
+    @Test
+    public void testGetResourceAsPath() throws Exception {
+        final String resource;
+        if (StringUtils.startsWith(this.resource, "/")) {
+            resource = this.resource.substring(1);
+        } else {
+            resource = prependIfMissing(this.resource, this.getClass().getPackage().getName().replace('.', '/') + "/");
+        }
+
+        Assume.assumeNotNull("Could not read resource the classic way",
+                Thread.currentThread().getContextClassLoader().getResource(resource));
+
+        final Path resourceAsPath = ResourceLoaderUtils.getResourceAsPath(resource);
+        assertNotNull("getResourceAsPath() returned null", resourceAsPath);
+
+        try (
+                InputStream expected = Thread.currentThread().getContextClassLoader().getResourceAsStream(resource);
+                InputStream real = Files.newInputStream(resourceAsPath)
         ) {
             assertTrue("content differs!", IOUtils.contentEquals(expected, real));
         }
