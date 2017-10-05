@@ -22,6 +22,7 @@ import java.net.URL;
 import java.nio.file.*;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Objects;
 
 /**
  * Convert jar/zip files to file-systems
@@ -38,7 +39,7 @@ public class ResourceLoaderUtils {
      * see {@link Thread#getContextClassLoader()}
      *
      * @param name The resource name
-     * @return a {@link Path}, or {@code null} if no resource with this name is found.
+     * @return an absolute {@link Path}, or {@code null} if no resource with this name is found.
      */
     public static Path getResourceAsPath(String name) {
         return getResourceAsPath(name, Thread.currentThread().getContextClassLoader());
@@ -48,7 +49,7 @@ public class ResourceLoaderUtils {
      * Finds a resource with a given name.
      * @param name The resource name
      * @param clazz The {@link Class} used to find the resource, see {@link Class#getResource(String)}.
-     * @return a {@link Path}, or {@code null} if no resource with this name is found.
+     * @return an absolute {@link Path}, or {@code null} if no resource with this name is found.
      */
     public static Path getResourceAsPath(String name, Class<?> clazz) {
         return getResourceAsPath(clazz.getResource(name));
@@ -59,7 +60,7 @@ public class ResourceLoaderUtils {
      *
      * @param name The resource name
      * @param classLoader The {@link ClassLoader} to use (see {@link ClassLoader#getResource(String)}
-     * @return a {@link Path}, or {@code null} if no resource with this name is found.
+     * @return an absolute {@link Path}, or {@code null} if no resource with this name is found.
      */
     public static Path getResourceAsPath(String name, ClassLoader classLoader) {
         return getResourceAsPath(classLoader.getResource(name));
@@ -72,10 +73,12 @@ public class ResourceLoaderUtils {
         if (resource == null) return null;
 
         final String protocol = resource.getProtocol();
+        final Path resultPath;
         switch (protocol) {
             case "file":
                 try {
-                    return Paths.get(resource.toURI());
+                    resultPath = Paths.get(resource.toURI());
+                    break;
                 } catch (URISyntaxException e) {
                     throw new IllegalStateException("Can't create URI from Resource-URL, how can that happen?", e);
                 }
@@ -103,10 +106,13 @@ public class ResourceLoaderUtils {
                         }
                     }
                 }
-                return fs.getPath(entryName);
+                resultPath = fs.getPath(entryName);
+                break;
             default:
                 throw new IllegalArgumentException("Can't read " + resource + ", unknown protocol '" + protocol + "'");
         }
+
+        return Objects.nonNull(resultPath) ? resultPath.toAbsolutePath() : null;
     }
 
     private ResourceLoaderUtils() {
