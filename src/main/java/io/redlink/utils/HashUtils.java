@@ -21,6 +21,7 @@ public class HashUtils {
     private enum HashAlg {
         MD5(32),
         SHA1(40),
+        SHA256("SHA-256", 64),
         SHA512("SHA-512", 128);
 
         private final String algorithm;
@@ -90,6 +91,28 @@ public class HashUtils {
 
     public static String sha1(byte[] bytes) {
         return calcHash(bytes, HashAlg.SHA1);
+    }
+
+    public static String sha256(String string) {
+        return calcHash(string, HashAlg.SHA256);
+    }
+
+    public static String sha256(File file) throws FileNotFoundException, IOException {
+        return sha256(file.toPath());
+    }
+
+    public static String sha256(Path file) throws FileNotFoundException, IOException {
+        try (InputStream is = Files.newInputStream(file, StandardOpenOption.READ)) {
+            return sha256(is);
+        }
+    }
+
+    public static String sha256(InputStream inStream) throws IOException {
+        return calcHash(inStream, HashAlg.SHA256);
+    }
+
+    public static String sha256(byte[] bytes) {
+        return calcHash(bytes, HashAlg.SHA256);
     }
 
     public static String sha512(String string) {

@@ -116,6 +116,42 @@ public class HashUtilsTest {
     }
 
     @Test
+    public void testSha256String() throws Exception {
+        assertEquals("e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+                HashUtils.sha256(""));
+        assertEquals("030dc1f936c3415aff3f3357163515190d347a28e758e1f717d17bae453541c9",
+                HashUtils.sha256("Lorem Ipsum"));
+    }
+
+    @Test
+    public void testSha256ByteArray() throws Exception {
+        assertEquals("e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+                HashUtils.sha256(new byte[0]));
+        assertEquals("030dc1f936c3415aff3f3357163515190d347a28e758e1f717d17bae453541c9",
+                HashUtils.sha256("Lorem Ipsum".getBytes("utf-8")));
+    }
+
+    @Test
+    public void testSha256File() throws Exception {
+        assertEquals("cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30",
+                HashUtils.sha256(file));
+    }
+
+    @Test
+    public void testSha256Path() throws Exception {
+        assertEquals("cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30",
+                HashUtils.sha256(path));
+    }
+
+    @Test
+    public void testSha256InputStream() throws Exception {
+        final InputStream stream = getClass().getResourceAsStream("/ASL-2.0.txt");
+
+        assertEquals("cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30",
+                HashUtils.sha256(stream));
+    }
+
+    @Test
     public void testSha512String() throws Exception {
         assertEquals("cf83e1357eefb8bdf1542850d66d8007d620e4050b5715dc83f4a921d36ce9ce47d0d13c5d85f2b0ff8318d2877eec2f63b931bd47417a81a538327af927da3e",
                 HashUtils.sha512(""));
