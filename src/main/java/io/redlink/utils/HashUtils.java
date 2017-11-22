@@ -18,10 +18,25 @@ import java.security.NoSuchAlgorithmException;
 @SuppressWarnings("DuplicateThrows")
 public class HashUtils {
 
-    private enum HashAlg {
+    /**
+     * Supported Hashing Algorithms
+     */
+    public enum HashAlg {
+        /**
+         * md5, creates 32 char digest.
+         */
         MD5(32),
+        /**
+         * sha-1, creates 40 char digest.
+         */
         SHA1(40),
+        /**
+         * sha2-256, creates 64 char digest.
+         */
         SHA256("SHA-256", 64),
+        /**
+         * sha2-512, creates 128 char digest.
+         */
         SHA512("SHA-512", 128);
 
         private final String algorithm;
@@ -36,11 +51,11 @@ public class HashUtils {
             this.digestLength = digestLength;
         }
 
-        public int getDigestLength() {
+        private int getDigestLength() {
             return digestLength;
         }
         
-        public MessageDigest createDigest() {
+        private MessageDigest createDigest() {
             try {
                 return MessageDigest.getInstance(this.algorithm);
             } catch (NoSuchAlgorithmException e) {
@@ -50,91 +65,105 @@ public class HashUtils {
     }
 
     public static String md5sum(String string) {
-        return calcHash(string, HashAlg.MD5);
+        return hash(HashAlg.MD5, string);
     }
 
     public static String md5sum(File file) throws FileNotFoundException, IOException {
-        return md5sum(file.toPath());
+        return hash(HashAlg.MD5, file.toPath());
     }
 
     public static String md5sum(Path file) throws FileNotFoundException, IOException {
-        try (InputStream is = Files.newInputStream(file, StandardOpenOption.READ)) {
-            return md5sum(is);
-        }
+        return hash(HashAlg.MD5, file);
     }
 
     public static String md5sum(InputStream inStream) throws IOException {
-        return calcHash(inStream, HashAlg.MD5);
+        return hash(HashAlg.MD5, inStream);
     }
 
     public static String md5sum(byte[] bytes) {
-        return calcHash(bytes, HashAlg.MD5);
+        return hash(HashAlg.MD5, bytes);
     }
 
     public static String sha1(String string) {
-        return calcHash(string, HashAlg.SHA1);
+        return hash(HashAlg.SHA1, string);
     }
 
     public static String sha1(File file) throws FileNotFoundException, IOException {
-        return sha1(file.toPath());
+        return hash(HashAlg.SHA1, file);
     }
 
     public static String sha1(Path file) throws FileNotFoundException, IOException {
-        try (InputStream is = Files.newInputStream(file, StandardOpenOption.READ)) {
-            return sha1(is);
-        }
+        return hash(HashAlg.SHA1, file);
     }
 
     public static String sha1(InputStream inStream) throws IOException {
-        return calcHash(inStream, HashAlg.SHA1);
+        return hash(HashAlg.SHA1, inStream);
     }
 
     public static String sha1(byte[] bytes) {
-        return calcHash(bytes, HashAlg.SHA1);
+        return hash(HashAlg.SHA1, bytes);
     }
 
     public static String sha256(String string) {
-        return calcHash(string, HashAlg.SHA256);
+        return hash(HashAlg.SHA256, string);
     }
 
     public static String sha256(File file) throws FileNotFoundException, IOException {
-        return sha256(file.toPath());
+        return hash(HashAlg.SHA256, file);
     }
 
     public static String sha256(Path file) throws FileNotFoundException, IOException {
-        try (InputStream is = Files.newInputStream(file, StandardOpenOption.READ)) {
-            return sha256(is);
-        }
+        return hash(HashAlg.SHA256, file);
     }
 
     public static String sha256(InputStream inStream) throws IOException {
-        return calcHash(inStream, HashAlg.SHA256);
+        return hash(HashAlg.SHA256, inStream);
     }
 
     public static String sha256(byte[] bytes) {
-        return calcHash(bytes, HashAlg.SHA256);
+        return hash(HashAlg.SHA256, bytes);
     }
 
     public static String sha512(String string) {
-        return calcHash(string, HashAlg.SHA512);
+        return hash(HashAlg.SHA512, string);
     }
 
     public static String sha512(File file) throws FileNotFoundException, IOException {
-        return sha512(file.toPath());
+        return hash(HashAlg.SHA512, file);
     }
 
     public static String sha512(Path file) throws FileNotFoundException, IOException {
-        try (InputStream is = Files.newInputStream(file, StandardOpenOption.READ)) {
-            return sha512(is);
-        }
+        return hash(HashAlg.SHA512, file);
     }
 
     public static String sha512(InputStream inStream) throws IOException {
-        return calcHash(inStream, HashAlg.SHA512);
+        return hash(HashAlg.SHA512, inStream);
     }
 
     public static String sha512(byte[] bytes) {
-        return calcHash(bytes, HashAlg.SHA512);
+        return hash(HashAlg.SHA512, bytes);
+    }
+
+    public static String hash(HashAlg alg, String string) {
+        return calcHash(string, alg);
+    }
+
+    public static String hash(HashAlg alg, File file) throws FileNotFoundException, IOException {
+        return hash(alg, file.toPath());
+    }
+
+    public static String hash(HashAlg alg, Path file) throws FileNotFoundException, IOException {
+        try (InputStream is = Files.newInputStream(file, StandardOpenOption.READ)) {
+            return hash(alg, is);
+        }
+    }
+
+    public static String hash(HashAlg alg, InputStream is) throws IOException {
+        return calcHash(is, alg);
+    }
+
+    public static String hash(HashAlg alg, byte[] bytes) {
+        return calcHash(bytes, alg);
     }
 
     private static String calcHash(String string, HashAlg algorithm) {

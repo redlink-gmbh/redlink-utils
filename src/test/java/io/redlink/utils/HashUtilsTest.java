@@ -50,6 +50,39 @@ public class HashUtilsTest {
     }
 
     @Test
+    public void testHashString() throws Exception {
+        assertEquals(HashUtils.md5sum("Lorem Ipsum"),
+                HashUtils.hash(HashUtils.HashAlg.MD5, "Lorem Ipsum"));
+    }
+
+    @Test
+    public void testHashByteArray() throws Exception {
+        assertEquals(HashUtils.md5sum("Lorem Ipsum".getBytes("utf-8")),
+                HashUtils.hash(HashUtils.HashAlg.MD5,"Lorem Ipsum".getBytes("utf-8")));
+    }
+
+    @Test
+    public void testHashFile() throws IOException {
+        assertEquals(HashUtils.md5sum(file),
+                HashUtils.hash(HashUtils.HashAlg.MD5, file));
+    }
+
+    @Test
+    public void testHashPath() throws IOException {
+        assertEquals(HashUtils.md5sum(path),
+                HashUtils.hash(HashUtils.HashAlg.MD5, path));
+    }
+
+    @Test
+    public void testHashInputStream() throws Exception {
+        final InputStream streamMd5 = getClass().getResourceAsStream("/ASL-2.0.txt");
+        final InputStream streamHash = getClass().getResourceAsStream("/ASL-2.0.txt");
+
+        assertEquals(HashUtils.md5sum(streamMd5),
+                HashUtils.hash(HashUtils.HashAlg.MD5, streamHash));
+    }
+
+    @Test
     public void testMd5sumString() throws Exception {
         assertEquals("6dbd01b4309de2c22b027eb35a3ce18b",
                 HashUtils.md5sum("Lorem Ipsum"));
