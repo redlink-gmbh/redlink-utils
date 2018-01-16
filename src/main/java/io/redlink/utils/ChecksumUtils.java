@@ -14,6 +14,12 @@ import java.util.zip.Adler32;
 import java.util.zip.CRC32;
 import java.util.zip.Checksum;
 
+/**
+ * Utilities to calculate checksums.
+ *
+ * @see CRC32
+ * @see Adler32
+ */
 public class ChecksumUtils {
 
     public static String crc32(String input) {
@@ -38,6 +44,11 @@ public class ChecksumUtils {
         }
     }
 
+    /**
+     * Calculate {@link CRC32}-Checksum of an {@link InputStream}. The input stream will be consumed.
+     * @param inputStream the InputStream to build the checksum on. The stream will be consumed,
+     *                    but <strong>not</strong> closed.
+     */
     public static String crc32(InputStream inputStream) throws IOException {
         return checksum(new CRC32(), inputStream);
     }
@@ -64,6 +75,11 @@ public class ChecksumUtils {
         }
     }
 
+    /**
+     * Calculate {@link Adler32}-Checksum of an {@link InputStream}. The input stream will be consumed.
+     * @param inputStream the InputStream to build the checksum on. The stream will be consumed,
+     *                    but <strong>not</strong> closed.
+     */
     public static String adler32(InputStream inputStream) throws IOException {
         return checksum(new Adler32(), inputStream);
     }
