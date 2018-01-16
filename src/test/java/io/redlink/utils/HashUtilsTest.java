@@ -50,7 +50,7 @@ public class HashUtilsTest {
     }
 
     @Test
-    public void testHashString() throws Exception {
+    public void testHashString() {
         assertEquals(HashUtils.md5sum("Lorem Ipsum"),
                 HashUtils.hash(HashUtils.HashAlg.MD5, "Lorem Ipsum"));
     }
@@ -83,7 +83,7 @@ public class HashUtilsTest {
     }
 
     @Test
-    public void testMd5sumString() throws Exception {
+    public void testMd5sumString() {
         assertEquals("6dbd01b4309de2c22b027eb35a3ce18b",
                 HashUtils.md5sum("Lorem Ipsum"));
     }
@@ -115,7 +115,7 @@ public class HashUtilsTest {
     }
 
     @Test
-    public void testSha1String() throws Exception {
+    public void testSha1String() {
         assertEquals("da39a3ee5e6b4b0d3255bfef95601890afd80709", HashUtils.sha1(""));
         assertEquals("0646164d30b3bd0023a1e6878712eb1b9b15a1da",
                 HashUtils.sha1("Lorem Ipsum"));
@@ -149,7 +149,7 @@ public class HashUtilsTest {
     }
 
     @Test
-    public void testSha256String() throws Exception {
+    public void testSha256String() {
         assertEquals("e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
                 HashUtils.sha256(""));
         assertEquals("030dc1f936c3415aff3f3357163515190d347a28e758e1f717d17bae453541c9",
@@ -185,7 +185,7 @@ public class HashUtilsTest {
     }
 
     @Test
-    public void testSha512String() throws Exception {
+    public void testSha512String() {
         assertEquals("cf83e1357eefb8bdf1542850d66d8007d620e4050b5715dc83f4a921d36ce9ce47d0d13c5d85f2b0ff8318d2877eec2f63b931bd47417a81a538327af927da3e",
                 HashUtils.sha512(""));
         assertEquals("7ffb69027702d73e3376de17b1377c29eb61a5510bc6196b5a251dc83ef1b444e98138c0f60727ba0e945a62af0715ae5bb4a6d7435ef1bd8184c7c7c158f317",
