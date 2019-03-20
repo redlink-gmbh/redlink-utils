@@ -6,7 +6,7 @@ package io.redlink.utils;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
@@ -20,14 +20,12 @@ import java.util.zip.Checksum;
  * @see CRC32
  * @see Adler32
  */
-public class ChecksumUtils {
+public final class ChecksumUtils {
+
+    private ChecksumUtils() {}
 
     public static String crc32(String input) {
-        try {
-            return crc32(input.getBytes("UTF-8"));
-        } catch (UnsupportedEncodingException e) {
-            return crc32(input.getBytes());
-        }
+        return crc32(input.getBytes(StandardCharsets.UTF_8));
     }
 
     public static String crc32(byte[] bytes) {
@@ -54,11 +52,7 @@ public class ChecksumUtils {
     }
 
     public static String adler32(String input) {
-        try {
-            return adler32(input.getBytes("UTF-8"));
-        } catch (UnsupportedEncodingException e) {
-            return adler32(input.getBytes());
-        }
+        return adler32(input.getBytes(StandardCharsets.UTF_8));
     }
 
     public static String adler32(byte[] bytes) {

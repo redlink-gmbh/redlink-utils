@@ -3,8 +3,12 @@
  */
 package io.redlink.utils;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.math.BigInteger;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
@@ -15,8 +19,8 @@ import java.security.NoSuchAlgorithmException;
 /**
  * Utils for calculating hashes (md5, sha1, sha512)
  */
-@SuppressWarnings("DuplicateThrows")
-public class HashUtils {
+@SuppressWarnings("squid:RedundantThrowsDeclarationCheck")
+public final class HashUtils {
 
     /**
      * Supported Hashing Algorithms
@@ -167,11 +171,7 @@ public class HashUtils {
     }
 
     private static String calcHash(String string, HashAlg algorithm) {
-        try {
-            return calcHash(string.getBytes("UTF-8"), algorithm);
-        } catch (UnsupportedEncodingException e) {
-            return calcHash(string.getBytes(), algorithm);
-        }
+        return calcHash(string.getBytes(StandardCharsets.UTF_8), algorithm);
     }
 
     private static String calcHash(byte[] bytes, HashAlg algorithm) {

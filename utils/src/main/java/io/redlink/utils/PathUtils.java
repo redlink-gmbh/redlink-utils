@@ -19,7 +19,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.nio.file.*;
+import java.nio.file.CopyOption;
+import java.nio.file.FileAlreadyExistsException;
+import java.nio.file.FileSystemLoopException;
+import java.nio.file.FileVisitOption;
+import java.nio.file.FileVisitResult;
+import java.nio.file.FileVisitor;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.nio.file.attribute.FileTime;
 import java.util.EnumSet;
@@ -31,10 +39,11 @@ import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 /**
  * Various Utils for {@link Path}s.
  */
-public class PathUtils {
+public final class PathUtils {
 
-    private static final Logger log = LoggerFactory.getLogger(PathUtils.class);
+    private static final Logger LOG = LoggerFactory.getLogger(PathUtils.class);
 
+    private PathUtils() {}
 
     /**
      * Copy a file/directory.
@@ -140,7 +149,7 @@ public class PathUtils {
         private final Path target;
         private final boolean preserve;
 
-        public TreeCopier(Path source, Path target, boolean preserve) {
+        TreeCopier(Path source, Path target, boolean preserve) {
             this.source = source;
             this.target = target;
             this.preserve = preserve;
@@ -179,9 +188,9 @@ public class PathUtils {
         @Override
         public FileVisitResult visitFileFailed(Path file, IOException exc) {
             if (exc instanceof FileSystemLoopException) {
-                log.error("cycle detected: {}", file);
+                LOG.error("cycle detected: {}", file);
             } else {
-                log.error("Unable to copy: {}: {}", file, exc);
+                LOG.error("Unable to copy: {}: {}", file, exc);
             }
             return CONTINUE;
         }

@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package io.redlink.utils.lang.de;
 
 import java.util.regex.Matcher;
@@ -24,9 +23,11 @@ import org.apache.commons.lang3.StringUtils;
 /**
  * Gender-related helper methods (German)
  */
-public class GenderUtils {
+public final class GenderUtils {
 
     private static final Pattern TOKENIZER = Pattern.compile("[,;]?\\s+");
+
+    private GenderUtils() {}
 
     /**
      * Extract all explicit gender forms from the label.

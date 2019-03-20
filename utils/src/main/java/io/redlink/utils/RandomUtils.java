@@ -21,9 +21,11 @@ import java.util.concurrent.ThreadLocalRandom;
 /**
  * Various utils for {@link Random}
  */
-public class RandomUtils {
+public final class RandomUtils {
 
-    private static char[] CHARS = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ".toCharArray();
+    private static final char[] CHARS = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ".toCharArray();
+
+    private RandomUtils() {}
 
     /**
      * Generates a random String with characters from {@code [0-9a-zA-Z]}.

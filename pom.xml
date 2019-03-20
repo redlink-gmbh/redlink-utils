@@ -28,10 +28,6 @@
     <url>https://github.com/redlink-gmbh/redlink-utils</url>
     <inceptionYear>2016</inceptionYear>
 
-    <modules>
-        <module>utils</module>
-    </modules>
-
     <organization>
         <name>redlink GmbH</name>
         <url>http://redlink.at</url>
@@ -53,6 +49,17 @@
         </developer>
     </developers>
 
+    <modules>
+        <module>utils</module>
+    </modules>
+
+    <scm>
+        <connection>scm:git:https://github.com/redlink-gmbh/redlink-utils.git</connection>
+        <developerConnection>scm:git:git@github.com:redlink-gmbh/redlink-utils.git</developerConnection>
+        <url>https://github.com/redlink-gmbh/redlink-utils</url>
+        <tag>HEAD</tag>
+    </scm>
+
     <distributionManagement>
         <snapshotRepository>
             <id>ossrh</id>
@@ -71,13 +78,6 @@
 
         <java.version>1.8</java.version>
     </properties>
-
-    <scm>
-        <connection>scm:git:https://github.com/redlink-gmbh/redlink-utils.git</connection>
-        <developerConnection>scm:git:git@github.com:redlink-gmbh/redlink-utils.git</developerConnection>
-        <url>https://github.com/redlink-gmbh/redlink-utils</url>
-        <tag>HEAD</tag>
-    </scm>
 
     <dependencyManagement>
         <dependencies>

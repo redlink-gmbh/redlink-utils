@@ -19,7 +19,11 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.nio.file.*;
+import java.nio.file.FileSystem;
+import java.nio.file.FileSystemNotFoundException;
+import java.nio.file.FileSystems;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Objects;
@@ -27,7 +31,7 @@ import java.util.Objects;
 /**
  * Convert jar/zip files to file-systems
  */
-public class ResourceLoaderUtils {
+public final class ResourceLoaderUtils {
 
     /**
      * Cache for {@link FileSystems} created.
@@ -88,31 +92,35 @@ public class ResourceLoaderUtils {
                 final String entryName = s.substring(separator + 2);
                 final URI jarUri = URI.create(s.substring(0, separator));
 
-                FileSystem fs = fileSystems.get(jarUri);
-                if (fs == null) {
-                    synchronized (fileSystems) {
-                        fs = fileSystems.get(jarUri);
-                        if (fs == null) {
-                            try {
-                                fs = FileSystems.getFileSystem(jarUri);
-                            } catch (FileSystemNotFoundException e1) {
-                                try {
-                                    fs = FileSystems.newFileSystem(jarUri, Collections.emptyMap());
-                                } catch (IOException e2) {
-                                    throw new RuntimeException("Could not create FileSystem for " + jarUri, e2);
-                                }
-                            }
-                            fileSystems.put(jarUri, fs);
-                        }
-                    }
-                }
-                resultPath = fs.getPath(entryName);
+                resultPath = getFileSystem(jarUri).getPath(entryName);
                 break;
             default:
                 throw new IllegalArgumentException("Can't read " + resource + ", unknown protocol '" + protocol + "'");
         }
 
         return Objects.nonNull(resultPath) ? resultPath.toAbsolutePath() : null;
+    }
+
+    private static FileSystem getFileSystem(URI jarUri) {
+        FileSystem fs = fileSystems.get(jarUri);
+        if (fs == null) {
+            synchronized (fileSystems) {
+                fs = fileSystems.get(jarUri);
+                if (fs == null) {
+                    try {
+                        fs = FileSystems.getFileSystem(jarUri);
+                    } catch (FileSystemNotFoundException e1) {
+                        try {
+                            fs = FileSystems.newFileSystem(jarUri, Collections.emptyMap());
+                        } catch (IOException e2) {
+                            throw new RuntimeException("Could not create FileSystem for " + jarUri, e2);
+                        }
+                    }
+                    fileSystems.put(jarUri, fs);
+                }
+            }
+        }
+        return fs;
     }
 
     private ResourceLoaderUtils() {
