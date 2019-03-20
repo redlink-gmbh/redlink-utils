@@ -57,7 +57,8 @@ public class GenderUtilsTest {
                 new Object[] { "Chef EntremetierE (Leitender Beilagenkoch, Leitende Beilagenköchin)",
                         "Chef Entremetier (Leitender Beilagenkoch)", "Chef Entremetiere (Leitende Beilagenköchin)" },
                 new Object[] { "Entwicklungskoch, Entwicklungsköchin (Fertiggerichteindustrie, Systemgastronomie)",
-                        "Entwicklungskoch (Fertiggerichteindustrie, Systemgastronomie)", "Entwicklungsköchin (Fertiggerichteindustrie, Systemgastronomie)" },
+                        "Entwicklungskoch (Fertiggerichteindustrie, Systemgastronomie)",
+                        "Entwicklungsköchin (Fertiggerichteindustrie, Systemgastronomie)" },
                 new Object[] { "Beilagenkoch, Beilagenköchin (EntremetierE)",
                         "Beilagenkoch (Entremetier)", "Beilagenköchin (Entremetiere)" },
                 new Object[] { "Schausteller/innen, andere Unterhaltungsberufe",
@@ -78,7 +79,7 @@ public class GenderUtilsTest {
     }
 
     @Test
-    public void testDegender() throws Exception {
+    public void testDegender() {
         final List<String> degendered = Arrays.asList(GenderUtils.degender(input));
 
         Assert.assertThat(degendered, Matchers.hasSize(Matchers.greaterThanOrEqualTo(1)));
