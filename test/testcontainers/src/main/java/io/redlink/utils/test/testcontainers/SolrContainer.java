@@ -30,12 +30,15 @@ public class SolrContainer extends FailureDetectingExternalResource {
     private final String coreName;
     private final String confDir;
 
-    private SolrContainer(String image, String coreName, String confDir) {
+    private SolrContainer(String image, String coreName, String confDir, File workingDir) {
         this.coreName = coreName;
         this.confDir = confDir;
 
+        Assert.assertTrue("workingDir does not exist", workingDir.exists());
+        Assert.assertTrue("workingDir not a directory", workingDir.isDirectory());
+
         container = new GenericContainer(image);
-        temporaryFolder = new TemporaryFolder(new File("."));
+        temporaryFolder = new TemporaryFolder(workingDir);
     }
 
     @Override
@@ -81,6 +84,10 @@ public class SolrContainer extends FailureDetectingExternalResource {
         temporaryFolder.delete();
     }
 
+    public String getCoreName() {
+        return coreName;
+    }
+
     public String getSolrUrl() {
         return String.format("http://%s:%d/solr", container.getContainerIpAddress(), container.getMappedPort(SOLR_PORT));
     }
@@ -98,7 +105,11 @@ public class SolrContainer extends FailureDetectingExternalResource {
     }
 
     public static SolrContainer create(String image, String collectionName, String confDir) {
-        return new SolrContainer(image, collectionName, confDir);
+        return create(image, collectionName, confDir, new File("."));
+    }
+
+    public static SolrContainer create(String image, String collectionName, String confDir, File workingDir) {
+        return new SolrContainer(image, collectionName, confDir, workingDir);
     }
 
 }

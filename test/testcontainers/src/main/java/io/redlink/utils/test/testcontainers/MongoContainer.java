@@ -8,6 +8,7 @@ import org.testcontainers.containers.wait.strategy.Wait;
 import org.testcontainers.containers.wait.strategy.WaitStrategy;
 import org.testcontainers.shaded.org.apache.commons.lang.StringUtils;
 
+import java.util.Objects;
 import java.util.concurrent.Future;
 
 public class MongoContainer extends GenericContainer<MongoContainer> {
@@ -59,6 +60,19 @@ public class MongoContainer extends GenericContainer<MongoContainer> {
         } else {
             return value;
         }
+    }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof MongoContainer)) return false;
+        if (!super.equals(o)) return false;
+        MongoContainer that = (MongoContainer) o;
+        return Objects.equals(databaseName, that.databaseName);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), databaseName);
     }
 }
