@@ -27,8 +27,8 @@
     </parent>
 
     <artifactId>test</artifactId>
-    <name>Redlink Test Utilities</name>
     <packaging>pom</packaging>
+    <name>Redlink Test Utilities</name>
 
     <modules>
         <module>testcontainers</module>
