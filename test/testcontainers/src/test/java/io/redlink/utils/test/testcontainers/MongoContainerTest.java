@@ -34,28 +34,28 @@ public class MongoContainerTest {
         try (MongoContainer mongoContainer = new MongoContainer()) {
             mongoContainer.start();
             try (MongoClient mongo = MongoClients.create(mongoContainer.getConnectionUrl())) {
-                final MongoDatabase testDB = mongo.getDatabase("test");
-                final Document ping = testDB.runCommand(new BasicDBObject("ping", "1"));
-
-                assertNotNull("not null", ping);
-                assertThat("status", ping.keySet(), Matchers.contains("ok"));
-                assertEquals("value", ping.getDouble("ok"), 1, 1e-6);
+                validate(mongo, "test");
             }
         }
     }
 
     @Test
     public void testCustomDatabase() {
-        try (MongoContainer mongoContainer = new MongoContainer().withDatabaseName("foo")) {
+        final String dbName = "foo";
+        try (MongoContainer mongoContainer = new MongoContainer().withDatabaseName(dbName)) {
             mongoContainer.start();
             try (MongoClient mongo = MongoClients.create(mongoContainer.getConnectionUrl())) {
-                final MongoDatabase testDB = mongo.getDatabase("foo");
-                final Document ping = testDB.runCommand(new BasicDBObject("ping", "1"));
-
-                assertNotNull("not null", ping);
-                assertThat("status", ping.keySet(), Matchers.contains("ok"));
-                assertEquals("value", ping.getDouble("ok"), 1, 1e-6);
+                validate(mongo, dbName);
             }
         }
+    }
+
+    private void validate(MongoClient mongo, String dbName) {
+        final MongoDatabase testDB = mongo.getDatabase(dbName);
+        final Document ping = testDB.runCommand(new BasicDBObject("ping", "1"));
+
+        assertThat("not null", ping, Matchers.notNullValue());
+        assertThat("status", ping.keySet(), Matchers.contains("ok"));
+        assertEquals("value", 1, ping.getDouble("ok"), 1e-6);
     }
 }
