@@ -7,6 +7,26 @@ _An assortment of useful utils_
 [![Javadocs](https://www.javadoc.io/badge/io.redlink.utils/utils.svg)](https://www.javadoc.io/doc/io.redlink.utils/utils)
 [![Apache 2.0 License](https://img.shields.io/github/license/redlink-gmbh/redlink-utils.svg)](http://www.apache.org/licenses/LICENSE-2.0)
 
+## Modules
+
+### `Utils`
+
+A mixed set of useful helpers, e.g. for calculating hashes/checksums, copying files and working with classpath-resources.
+
+### `Lang DE`
+
+Some helpers to handle German specifics, currently only (de-)genering is available:
+`"Einzelhandelskaufmann/-frau" --> [ "Einzelhandelskaufmann", "Einzelhandelskauffrau" ]`
+
+### Test
+
+#### `Testcontainers`
+
+Convenience-Wrapper for commonly used [testcontainers](https://github.com/testcontainers/testcontainers-java):
+
+* SolrContainer
+* MongoContainer
+
 ## License
 Free use of this software is granted under the terms of the Apache License Version 2.0.
 See the [License](LICENSE.txt) for more details.
