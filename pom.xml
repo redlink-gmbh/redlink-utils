@@ -252,6 +252,7 @@
             <properties>
                 <sonar.host.url>https://sonarcloud.io</sonar.host.url>
                 <sonar.organization>redlink</sonar.organization>
+                <sonar.dependencyCheck.reportPath>${project.build.directory}/dependency-check-report.xml</sonar.dependencyCheck.reportPath>
             </properties>
             <build>
                 <plugins>
@@ -301,9 +302,6 @@
                                 </goals>
                             </execution>
                         </executions>
-                        <configuration>
-                            <sonar.dependencyCheck.reportPath>${project.build.directory}/dependency-check-report.xml</sonar.dependencyCheck.reportPath>
-                        </configuration>
                     </plugin>
                 </plugins>
             </build>
