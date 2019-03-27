@@ -270,6 +270,25 @@
                         </executions>
                     </plugin>
                     <plugin>
+                        <groupId>org.owasp</groupId>
+                        <artifactId>dependency-check-maven</artifactId>
+                        <version>5.0.0-M2</version>
+                        <executions>
+                            <execution>
+                                <id>owasp-dependenxy-ceck</id>
+                                <goals>
+                                    <goal>aggregate</goal>
+                                </goals>
+                                <configuration>
+                                    <format>ALL</format>
+                                </configuration>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <assemblyAnalyzerEnabled>false</assemblyAnalyzerEnabled>
+                        </configuration>
+                    </plugin>
+                    <plugin>
                         <groupId>org.sonarsource.scanner.maven</groupId>
                         <artifactId>sonar-maven-plugin</artifactId>
                         <version>3.5.0.1254</version>
@@ -282,6 +301,9 @@
                                 </goals>
                             </execution>
                         </executions>
+                        <configuration>
+                            <sonar.dependencyCheck.reportPath>${project.build.directory}/dependency-check-report.xml</sonar.dependencyCheck.reportPath>
+                        </configuration>
                     </plugin>
                 </plugins>
             </build>
