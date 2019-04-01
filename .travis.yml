@@ -34,3 +34,7 @@ jobs:
         - mvn -B verify
           -Dsonar.login="${SONAR_TOKEN}"
           $SONAR_PARAMS
+
+cache:
+  directories:
+    - $HOME/.m2
