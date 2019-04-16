@@ -53,7 +53,7 @@
         <module>utils</module>
         <module>lang-de</module>
 
-        <module>signal</module>
+        <module>signals</module>
 
         <module>test</module>
     </modules>

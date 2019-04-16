@@ -26,8 +26,9 @@
         <version>2.0.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>signal</artifactId>
-    <name>Signal Handler</name>
+    <artifactId>signals</artifactId>
+    <name>Signal Handler Utils</name>
+    <description>Some Helpers for Signal Handlers - based on sun.misc.Signal</description>
 
     <dependencies>
         <dependency>
