@@ -46,7 +46,7 @@ public class SignalsHelperTest {
 
     @Test
     public void testRegisterClear() {
-        testRegisterClear("USR");
+        testRegisterClear("USR2");
     }
 
     private void testRegisterClear(String signal) {
