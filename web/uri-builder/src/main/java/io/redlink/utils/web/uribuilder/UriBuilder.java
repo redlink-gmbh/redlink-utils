@@ -12,6 +12,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -32,7 +33,7 @@ public class UriBuilder {
 
     private List<String> pathSegments = new LinkedList<>();
 
-    private Map<String, List<String>> queryParams = new HashMap<>();
+    private Map<String, List<String>> queryParams = new LinkedHashMap<>();
 
     private String fragment;
 
@@ -145,6 +146,12 @@ public class UriBuilder {
         return copy;
     }
 
+    public static UriBuilder create(String scheme, String host) {
+        return new UriBuilder()
+                .scheme(scheme)
+                .host(host);
+    }
+
     public static UriBuilder fromString(String uri) {
         return fromUri(URI.create(uri));
     }
@@ -185,9 +192,8 @@ public class UriBuilder {
     private static Map<String, List<String>> fromQueryString(String queryString) {
         final HashMap<String, List<String>> query = new HashMap<>();
         if (queryString != null) {
-            // FIXME: this does not yet work...
             Arrays.stream(queryString.split("&"))
-                    .flatMap(e -> Arrays.stream(e.split("=", 2)))
+                    .map(e -> e.split("=", 2))
                     .map(Arrays::asList)
                     .map(v -> v.stream().map(UriBuilder::decode).collect(Collectors.toList()))
                     .forEach(v -> query.computeIfAbsent(v.get(0), k -> new LinkedList<>()).add(v.get(1)));
