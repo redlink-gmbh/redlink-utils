@@ -19,6 +19,7 @@ import io.redlink.utils.hamcrest.UriMatchers;
 import io.redlink.utils.web.uribuilder.UriBuilder;
 import java.net.URI;
 import java.net.URISyntaxException;
+import org.hamcrest.CoreMatchers;
 import org.hamcrest.Matchers;
 import org.junit.Test;
 

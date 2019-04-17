@@ -5,6 +5,7 @@ package io.redlink.utils.hamcrest;
 
 import java.net.URI;
 import java.util.function.Function;
+import org.hamcrest.CoreMatchers;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeDiagnosingMatcher;
@@ -32,25 +33,47 @@ public final class UriMatchers {
         };
     }
 
-
-
     public static TypeSafeDiagnosingMatcher<URI> hasScheme(String scheme) {
-        return create("scheme", scheme, URI::getScheme);
+        return hasScheme(CoreMatchers.is(scheme));
+    }
+
+    public static TypeSafeDiagnosingMatcher<URI> hasScheme(Matcher<String> schemeMatcher) {
+        return create("scheme", schemeMatcher, URI::getScheme);
     }
 
     public static TypeSafeDiagnosingMatcher<URI> hasHost(String host) {
-        return create("host", host, URI::getHost);
+        return hasHost(CoreMatchers.is(host));
+    }
+
+    public static TypeSafeDiagnosingMatcher<URI> hasHost(Matcher<String> hostMatcher) {
+        return create("host", hostMatcher, URI::getHost);
     }
 
     public static TypeSafeDiagnosingMatcher<URI> hasPort(int port) {
-        return create("port", port, URI::getPort);
+        return hasPort(CoreMatchers.is(port));
+    }
+
+    public static TypeSafeDiagnosingMatcher<URI> hasPort(Matcher<Integer> portMatcher) {
+        return create("port", portMatcher, URI::getPort);
     }
 
     public static TypeSafeDiagnosingMatcher<URI> hasPath(String path) {
-        return create("path", path, URI::getPath);
+        return hasPath(CoreMatchers.is(path));
     }
 
-    private static <T> TypeSafeDiagnosingMatcher<URI> create(String uriPart, T part, Function<URI, T> fkt) {
+    public static TypeSafeDiagnosingMatcher<URI> hasPath(Matcher<String> pathMatcher) {
+        return create("path", pathMatcher, URI::getPath);
+    }
+
+    public static TypeSafeDiagnosingMatcher<URI> hasFragment(String fragment) {
+        return hasFragment(CoreMatchers.is(fragment));
+    }
+
+    public static TypeSafeDiagnosingMatcher<URI> hasFragment(Matcher<String> fragmentMatcher) {
+        return create("fragment", fragmentMatcher, URI::getFragment);
+    }
+
+    private static <T> TypeSafeDiagnosingMatcher<URI> create(String uriPart, Matcher<T> partMatcher, Function<URI, T> fkt) {
         return new TypeSafeDiagnosingMatcher<URI>() {
             @Override
             protected boolean matchesSafely(URI item, Description mismatchDescription) {
@@ -58,17 +81,17 @@ public final class UriMatchers {
                     mismatchDescription.appendText("URI ").appendValue(null);
                     return false;
                 }
-                describe(fkt.apply(item), mismatchDescription);
-                return part.equals(fkt.apply(item));
+
+                mismatchDescription.appendText("URI with ").appendText(uriPart).appendText(" ");
+                partMatcher.describeMismatch(fkt.apply(item), mismatchDescription);
+
+                return partMatcher.matches(fkt.apply(item));
             }
 
             @Override
             public void describeTo(Description description) {
-                describe(part, description);
-            }
-
-            private void describe(T part, Description description) {
-                description.appendText("URI with ").appendText(uriPart).appendText(" ").appendValue(part);
+                description.appendText("URI with ").appendText(uriPart).appendText(" ")
+                        .appendDescriptionOf(partMatcher);
             }
         };
     }
