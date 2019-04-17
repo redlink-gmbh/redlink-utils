@@ -16,8 +16,6 @@
 package io.redlink.utils.signal;
 
 import java.util.Arrays;
-import sun.misc.Signal;
-import sun.misc.SignalHandler;
 
 import java.util.function.BiConsumer;
 
@@ -83,21 +81,22 @@ public final class SignalsHelper {
         registerHandler(handler, Arrays.stream(signal).map(SIG::getSigName).toArray(String[]::new));
     }
 
-        /**
-         * Register a handler for the provided signals
-         * @param handler the handler to register
-         * @param signal the signals to register for
-         */
+    /**
+     * Register a handler for the provided signals
+     * @param handler the handler to register
+     * @param signal the signals to register for
+     */
+    @SuppressWarnings("squid:S1191")
     public static void registerHandler(BiConsumer<Integer, String> handler, String... signal) {
-        final SignalHandler signalHandler = sig -> {
+        final sun.misc.SignalHandler signalHandler = sig -> {
             LOG.debug("Received Signal({}): {}", sig.getName(), sig.getNumber());
             handler.accept(sig.getNumber(), sig.getName());
         };
 
         for (String s : signal) {
-            final Signal sig = new Signal(s);
+            final sun.misc.Signal sig = new sun.misc.Signal(s);
             LOG.trace("Registering signal-handler for {} ({})", sig.getName(), sig.getNumber());
-            Signal.handle(sig, signalHandler);
+            sun.misc.Signal.handle(sig, signalHandler);
         }
     }
 
@@ -113,11 +112,12 @@ public final class SignalsHelper {
      * Clear the custom handler for the provided signals (and install the default handler)
      * @param signal the signals to reset.
      */
+    @SuppressWarnings("squid:S1191")
     public static void clearHandler(String... signal) {
         for (String s : signal) {
-            final Signal sig = new Signal(s);
+            final sun.misc.Signal sig = new sun.misc.Signal(s);
             LOG.trace("Clear signal-handler for {} ({})", sig.getName(), sig.getNumber());
-            Signal.handle(sig, SignalHandler.SIG_DFL);
+            sun.misc.Signal.handle(sig, sun.misc.SignalHandler.SIG_DFL);
         }
     }
 }

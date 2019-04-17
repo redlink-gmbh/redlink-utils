@@ -22,12 +22,26 @@ import org.awaitility.Awaitility;
 import org.hamcrest.Matchers;
 import org.junit.Assert;
 import org.junit.Test;
-import sun.misc.Signal;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
+@RunWith(Parameterized.class)
+@SuppressWarnings("squid:S1191")
 public class SignalsHelperTest {
+
+    @Parameterized.Parameters(name = "SIG{0}")
+    public static Object[] data() {
+        return SignalsHelper.SIG.values();
+    }
+
+    private final SignalsHelper.SIG signalToTest;
+
+    public SignalsHelperTest(SignalsHelper.SIG signalToTest) {
+        this.signalToTest = signalToTest;
+    }
 
     @Test
     public void testSigUsr2() {
@@ -36,7 +50,7 @@ public class SignalsHelperTest {
 
         SignalsHelper.registerHandler((num, name) -> counter.incrementAndGet(), s);
 
-        Signal.raise(new Signal(s));
+        sun.misc.Signal.raise(new sun.misc.Signal(s));
 
         Awaitility.await()
                 .atMost(1, TimeUnit.SECONDS)
@@ -45,8 +59,18 @@ public class SignalsHelperTest {
     }
 
     @Test
-    public void testRegisterClear() {
+    public void testRegisterClearUsr2() {
         testRegisterClear("USR2");
+    }
+
+    @Test
+    public void testWithEnum() {
+        testRegisterClear(signalToTest);
+    }
+
+    @Test
+    public void testWithSignalName() {
+        testRegisterClear(signalToTest.getSigName());
     }
 
     private void testRegisterClear(String signal) {
@@ -54,7 +78,7 @@ public class SignalsHelperTest {
 
         SignalsHelper.registerHandler((num, name) -> counter.incrementAndGet(), signal);
 
-        Signal.raise(new Signal(signal));
+        sun.misc.Signal.raise(new sun.misc.Signal(signal));
 
         Awaitility.await()
                 .atMost(1, TimeUnit.SECONDS)
@@ -64,17 +88,32 @@ public class SignalsHelperTest {
         SignalsHelper.clearHandler(signal);
 
         try {
-            Signal.raise(new Signal(signal));
+            sun.misc.Signal.raise(new sun.misc.Signal(signal));
             fail();
         } catch (IllegalArgumentException e) {
             Assert.assertThat(e.getMessage(), Matchers.is("Unhandled signal: SIG" + signal));
         }
     }
 
-    @Test
-    public void testAll() {
-        for (SignalsHelper.SIG sig : SignalsHelper.SIG.values()) {
-            testRegisterClear(sig.getSigName());
+    private void testRegisterClear(SignalsHelper.SIG signal) {
+        final AtomicInteger counter = new AtomicInteger();
+
+        SignalsHelper.registerHandler((num, name) -> counter.incrementAndGet(), signal);
+
+        sun.misc.Signal.raise(new sun.misc.Signal(signal.getSigName()));
+
+        Awaitility.await()
+                .atMost(1, TimeUnit.SECONDS)
+                .until(counter::get, Matchers.is(1));
+        assertEquals(1, counter.get());
+
+        SignalsHelper.clearHandler(signal);
+
+        try {
+            sun.misc.Signal.raise(new sun.misc.Signal(signal.getSigName()));
+            fail();
+        } catch (IllegalArgumentException e) {
+            Assert.assertThat(e.getMessage(), Matchers.is("Unhandled signal: SIG" + signal));
         }
     }
 }
