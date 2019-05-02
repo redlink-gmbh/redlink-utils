@@ -8,10 +8,14 @@ import io.redlink.utils.ResourceLoaderUtils;
 import org.junit.Assert;
 import org.junit.rules.TemporaryFolder;
 import org.junit.runner.Description;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.testcontainers.containers.BindMode;
 import org.testcontainers.containers.FailureDetectingExternalResource;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.wait.strategy.Wait;
+
+import com.github.dockerjava.api.model.TmpfsOptions;
 
 import java.io.File;
 import java.io.IOException;
@@ -19,6 +23,8 @@ import java.nio.file.Path;
 import java.time.Duration;
 
 public class SolrContainer extends FailureDetectingExternalResource {
+    
+    private final Logger log = LoggerFactory.getLogger(getClass());
 
     private static final String DEFAULT_IMAGE = "solr";
     private static final String DEFAULT_TAG = "7.7.1";
@@ -50,7 +56,14 @@ public class SolrContainer extends FailureDetectingExternalResource {
         try {
             before();
         } catch (Exception t) {
-            Assert.fail(t.getMessage());
+            if(log.isDebugEnabled()) {
+                log.error("Failed to initialize SolrContainer(coreName: {} | confDir: {} | tmpFolder: {})", 
+                        coreName, confDir, temporaryFolder, t);
+            } else {
+                log.error("Failed to initialize SolrContainer(coreName: {} | confDir: {} | tmpFolder: {} | {} - {})", 
+                        coreName, confDir, temporaryFolder, t.getClass().getSimpleName(), t.getMessage());
+            }
+            Assert.fail("Failed to initialize (" + t.getClass().getSimpleName() + " - " + t.getMessage() + ")");
         }
     }
 
