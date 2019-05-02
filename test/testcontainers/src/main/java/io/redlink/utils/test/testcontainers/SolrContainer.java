@@ -21,7 +21,7 @@ import java.time.Duration;
 public class SolrContainer extends FailureDetectingExternalResource {
 
     private static final String DEFAULT_IMAGE = "solr";
-    private static final String DEFAULT_TAG = "7.6.0";
+    private static final String DEFAULT_TAG = "7.7.1";
 
     private static final Integer SOLR_PORT = 8983;
 
@@ -29,8 +29,9 @@ public class SolrContainer extends FailureDetectingExternalResource {
     private final GenericContainer container;
     private final String coreName;
     private final String confDir;
+    private final Duration startupTimeout;
 
-    private SolrContainer(String image, String coreName, String confDir, File workingDir) {
+    private SolrContainer(String image, String coreName, String confDir, File workingDir, Duration startupTimeout) {
         this.coreName = coreName;
         this.confDir = confDir;
 
@@ -39,6 +40,7 @@ public class SolrContainer extends FailureDetectingExternalResource {
 
         container = new GenericContainer(image);
         temporaryFolder = new TemporaryFolder(workingDir);
+        this.startupTimeout = startupTimeout == null ? Duration.ofSeconds(15) : startupTimeout;
     }
 
     @Override
@@ -65,7 +67,7 @@ public class SolrContainer extends FailureDetectingExternalResource {
         container.withCommand("solr-precreate", coreName, "/core-conf");
         container.waitingFor(
                 Wait.forLogMessage(".*SolrCore \\Q[" + coreName + "]\\E Registered new searcher.*\n", 1)
-                        .withStartupTimeout(Duration.ofSeconds(15))
+                        .withStartupTimeout(startupTimeout)
         );
 
         container.start();
@@ -99,17 +101,30 @@ public class SolrContainer extends FailureDetectingExternalResource {
     public static SolrContainer create(String confDir) {
         return create("collection", confDir);
     }
+    public static SolrContainer create(String confDir, Duration startupTimeout) {
+        return create("collection", confDir, startupTimeout);
+    }
 
     public static SolrContainer create(String collectionName, String confDir) {
         return create(DEFAULT_IMAGE + ":" + DEFAULT_TAG, collectionName, confDir);
+    }
+    public static SolrContainer create(String collectionName, String confDir, Duration startupTimeout) {
+        return create(DEFAULT_IMAGE + ":" + DEFAULT_TAG, collectionName, confDir, startupTimeout);
     }
 
     public static SolrContainer create(String image, String collectionName, String confDir) {
         return create(image, collectionName, confDir, new File("."));
     }
+    public static SolrContainer create(String image, String collectionName, String confDir, Duration startupTimeout) {
+        return create(image, collectionName, confDir, new File("."), startupTimeout);
+    }
 
     public static SolrContainer create(String image, String collectionName, String confDir, File workingDir) {
-        return new SolrContainer(image, collectionName, confDir, workingDir);
+        return create(image, collectionName, confDir, workingDir, null);
+    }
+    
+    public static SolrContainer create(String image, String collectionName, String confDir, File workingDir, Duration startupTimeout) {
+        return new SolrContainer(image, collectionName, confDir, workingDir, startupTimeout);
     }
 
 }
