@@ -53,6 +53,8 @@
         <module>utils</module>
         <module>lang-de</module>
 
+        <module>slf4j</module>
+
         <module>test</module>
     </modules>
 
