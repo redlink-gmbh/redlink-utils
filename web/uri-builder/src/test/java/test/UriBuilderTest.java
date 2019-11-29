@@ -57,4 +57,26 @@ public class UriBuilderTest {
 
     }
 
+    @Test
+    public void testSpecialChars() throws URISyntaxException {
+        final UriBuilder builder = UriBuilder.create("https", "example.com");
+
+        builder.pathSegment("some/path/with space");
+        builder.query("another space", "key and value");
+        builder.query("reserved", "foo&bar");
+        builder.query("encoded", "100%25");
+        builder.query("non-ascii", "¢");
+
+        builder.query("fragment", "#tag");
+
+        assertThat(builder.build().toString(), Matchers.allOf(
+                Matchers.containsString("/some/path/with%20space"),
+                Matchers.containsString("?another%20space=key%20and%20value&"),
+                Matchers.containsString("&reserved=foo%26bar&"),
+                Matchers.containsString("&encoded=100%2525&"),
+                Matchers.containsString("&non-ascii=%C2%A2&"),
+                Matchers.containsString("&fragment=%23tag&")
+        ));
+
+    }
 }
