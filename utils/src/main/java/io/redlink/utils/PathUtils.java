@@ -163,7 +163,9 @@ public final class PathUtils {
             final Path newdir = target.resolve(source.relativize(dir).toString());
             try {
                 Files.copy(dir, newdir, options);
-            } catch (FileAlreadyExistsException ignore) {}
+            } catch (FileAlreadyExistsException ignore) {
+                // ignored
+            }
             return CONTINUE;
         }
 
