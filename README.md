@@ -20,6 +20,11 @@ A mixed set of useful helpers, e.g. for calculating hashes/checksums, copying fi
 Some helpers to handle German specifics, currently only (de-)genering is available:
 `"Einzelhandelskaufmann/-frau" --> [ "Einzelhandelskaufmann", "Einzelhandelskauffrau" ]`
 
+### Logging
+
+A `LoggingContext` for [SLF4J](http://www.slf4j.org/) that encapsulates a [`MDC`](http://www.slf4j.org/api/org/slf4j/MDC.html). 
+When the LoggingContext is closed, the MDC is reset to the state it was when the LoggingContext was created.
+
 ### Test
 
 #### `Testcontainers`

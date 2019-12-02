@@ -14,13 +14,22 @@
  * limitations under the License.
  */
 
+import java.util.UUID;
+import java.util.concurrent.Callable;
+import java.util.function.Supplier;
 import org.hamcrest.CoreMatchers;
+import org.junit.Before;
 import org.junit.Test;
 import org.slf4j.MDC;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertThat;
 
 public class LoggingContextTest {
+
+    @Before
+    public void setUp() throws Exception {
+        MDC.clear();
+    }
 
     @Test
     public void testLoggingContext() {
@@ -55,4 +64,77 @@ public class LoggingContextTest {
 
     }
 
+    @Test
+    public void testWithEmpty() {
+        try (LoggingContext empty = LoggingContext.empty()) {
+            assertThat("Empty Context", MDC.get("foo"), CoreMatchers.nullValue());
+
+            MDC.put("foo", "bar");
+            assertThat("foo Context", MDC.get("foo"), CoreMatchers.is("bar"));
+        }
+        assertThat("Cleaned Context", MDC.get("foo"), CoreMatchers.nullValue());
+    }
+
+    @Test
+    public void testWrapRunnable() {
+        final String value = UUID.randomUUID().toString();
+        MDC.put("mdc", value);
+        LoggingContext.wrap(() -> {
+            assertThat(MDC.get("mdc"), CoreMatchers.is(value));
+            MDC.clear();
+        }).run();
+        assertThat(MDC.get("mdc"), CoreMatchers.is(value));
+    }
+
+    @Test
+    public void testWrapCallable() throws Exception {
+        final String value = UUID.randomUUID().toString();
+        MDC.put("mdc", value);
+        LoggingContext.wrap((Callable<String>) () -> {
+            assertThat(MDC.get("mdc"), CoreMatchers.is(value));
+            MDC.clear();
+            return "mdc";
+        }).call();
+
+        assertThat(MDC.get("mdc"), CoreMatchers.is(value));
+    }
+
+    @Test
+    public void testWrapFunction() {
+        final String value = UUID.randomUUID().toString();
+        MDC.put("mdc", value);
+        LoggingContext.wrap((String s) -> {
+            assertThat(MDC.get("mdc"), CoreMatchers.is(value));
+            MDC.put("mdc", s);
+            assertThat(MDC.get("mdc"), CoreMatchers.is(s));
+            return s.length();
+        }).apply(UUID.randomUUID().toString());
+
+        assertThat(MDC.get("mdc"), CoreMatchers.is(value));
+    }
+
+    @Test
+    public void testWrapSupplier() {
+        final String value = UUID.randomUUID().toString();
+        MDC.put("mdc", value);
+        LoggingContext.wrap((Supplier<String>) () -> {
+            assertThat(MDC.get("mdc"), CoreMatchers.is(value));
+            MDC.clear();
+            return "mdc";
+        }).get();
+
+        assertThat(MDC.get("mdc"), CoreMatchers.is(value));
+    }
+
+    @Test
+    public void testWrapConsumer() {
+        final String value = UUID.randomUUID().toString();
+        MDC.put("mdc", value);
+        LoggingContext.wrap((String s) -> {
+            assertThat(MDC.get("mdc"), CoreMatchers.is(value));
+            MDC.put("mdc", s);
+        }).accept(UUID.randomUUID().toString());
+
+        assertThat(MDC.get("mdc"), CoreMatchers.is(value));
+    }
 }
