@@ -253,6 +253,7 @@
                 <sonar.host.url>https://sonarcloud.io</sonar.host.url>
                 <sonar.organization>redlink</sonar.organization>
                 <sonar.dependencyCheck.reportPath>${project.build.directory}/dependency-check-report.xml</sonar.dependencyCheck.reportPath>
+                <sonar.coverage.jacoco.xmlReportPaths>target/jacoco/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
             </properties>
             <build>
                 <plugins>
@@ -267,6 +268,15 @@
                                 <goals>
                                     <goal>prepare-agent</goal>
                                 </goals>
+                            </execution>
+                            <execution>
+                                <id>coverage-report</id>
+                                <goals>
+                                    <goal>report</goal>
+                                </goals>
+                                <configuration>
+                                    <outputDirectory>${project.build.directory}/jacoco</outputDirectory>
+                                </configuration>
                             </execution>
                         </executions>
                     </plugin>
