@@ -1,6 +1,7 @@
 /*
  * Copyright (c) 2019 Redlink GmbH.
  */
+package io.redlink.utils.logging;
 
 import java.util.Map;
 import java.util.concurrent.Callable;
