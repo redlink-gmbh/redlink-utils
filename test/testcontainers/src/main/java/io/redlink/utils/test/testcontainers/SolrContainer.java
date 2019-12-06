@@ -5,6 +5,10 @@ package io.redlink.utils.test.testcontainers;
 
 import io.redlink.utils.PathUtils;
 import io.redlink.utils.ResourceLoaderUtils;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Path;
+import java.time.Duration;
 import org.junit.Assert;
 import org.junit.rules.TemporaryFolder;
 import org.junit.runner.Description;
@@ -15,16 +19,9 @@ import org.testcontainers.containers.FailureDetectingExternalResource;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.wait.strategy.Wait;
 
-import com.github.dockerjava.api.model.TmpfsOptions;
-
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Path;
-import java.time.Duration;
-
 public class SolrContainer extends FailureDetectingExternalResource {
     
-    private final Logger log = LoggerFactory.getLogger(getClass());
+    private static final Logger LOG = LoggerFactory.getLogger(SolrContainer.class);
 
     private static final String DEFAULT_IMAGE = "solr";
     private static final String DEFAULT_TAG = "7.7.1";
@@ -32,7 +29,7 @@ public class SolrContainer extends FailureDetectingExternalResource {
     private static final Integer SOLR_PORT = 8983;
 
     private final TemporaryFolder temporaryFolder;
-    private final GenericContainer container;
+    private final GenericContainer<?> container;
     private final String coreName;
     private final String confDir;
     private final Duration startupTimeout;
@@ -44,7 +41,7 @@ public class SolrContainer extends FailureDetectingExternalResource {
         Assert.assertTrue("workingDir does not exist", workingDir.exists());
         Assert.assertTrue("workingDir not a directory", workingDir.isDirectory());
 
-        container = new GenericContainer(image);
+        container = new GenericContainer<>(image);
         temporaryFolder = new TemporaryFolder(workingDir);
         this.startupTimeout = startupTimeout == null ? Duration.ofSeconds(15) : startupTimeout;
     }
@@ -56,11 +53,11 @@ public class SolrContainer extends FailureDetectingExternalResource {
         try {
             before();
         } catch (Exception t) {
-            if(log.isDebugEnabled()) {
-                log.error("Failed to initialize SolrContainer(coreName: {} | confDir: {} | tmpFolder: {})", 
+            if(LOG.isDebugEnabled()) {
+                LOG.error("Failed to initialize SolrContainer(coreName: {} | confDir: {} | tmpFolder: {})",
                         coreName, confDir, temporaryFolder, t);
             } else {
-                log.error("Failed to initialize SolrContainer(coreName: {} | confDir: {} | tmpFolder: {} | {} - {})", 
+                LOG.error("Failed to initialize SolrContainer(coreName: {} | confDir: {} | tmpFolder: {} | {} - {})",
                         coreName, confDir, temporaryFolder, t.getClass().getSimpleName(), t.getMessage());
             }
             Assert.fail("Failed to initialize (" + t.getClass().getSimpleName() + " - " + t.getMessage() + ")");
@@ -114,6 +111,7 @@ public class SolrContainer extends FailureDetectingExternalResource {
     public static SolrContainer create(String confDir) {
         return create("collection", confDir);
     }
+
     public static SolrContainer create(String confDir, Duration startupTimeout) {
         return create("collection", confDir, startupTimeout);
     }
