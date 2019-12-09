@@ -31,8 +31,10 @@ When the LoggingContext is closed, the MDC is reset to the state it was when the
 
 Convenience-Wrapper for commonly used [testcontainers](https://github.com/testcontainers/testcontainers-java):
 
-* SolrContainer
-* MongoContainer
+* **SolrContainer**
+* **MongoContainer**
+* **[VindContainer](https://github.com/RBMHTechnology/vind)**, 
+based on [vind-solr-server](https://github.com/redlink-gmbh/vind-solr-server).
 
 ## License
 Free use of this software is granted under the terms of the Apache License Version 2.0.
