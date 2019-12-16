@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package test;
+package io.redlink.utils.web.uribuilder;
 
 import io.redlink.utils.hamcrest.UriMatchers;
 import io.redlink.utils.web.uribuilder.UriBuilder;
@@ -61,7 +61,8 @@ public class UriBuilderTest {
     public void testSpecialChars() throws URISyntaxException {
         final UriBuilder builder = UriBuilder.create("https", "example.com");
 
-        builder.pathSegment("some/path/with space");
+        builder.pathSegment("/some/path/with space");
+        builder.pathSegment("folder");
         builder.query("another space", "key and value");
         builder.query("reserved", "foo&bar");
         builder.query("encoded", "100%25");
@@ -69,9 +70,12 @@ public class UriBuilderTest {
 
         builder.query("fragment", "#tag");
 
-        assertThat(builder.build().toString(), Matchers.allOf(
-                Matchers.containsString("/some/path/with%20space"),
-                Matchers.containsString("?another%20space=key%20and%20value&"),
+        assertThat(builder.build().toASCIIString(), Matchers.allOf(
+                Matchers.containsString("/some/path/with%20space/folder"),
+                Matchers.anyOf(
+                        Matchers.containsString("?another%20space=key%20and%20value&"),
+                        Matchers.containsString("?another+space=key+and+value&")
+                        ),
                 Matchers.containsString("&reserved=foo%26bar&"),
                 Matchers.containsString("&encoded=100%2525&"),
                 Matchers.containsString("&non-ascii=%C2%A2&"),
