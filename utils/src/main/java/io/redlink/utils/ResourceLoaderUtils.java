@@ -113,7 +113,7 @@ public final class ResourceLoaderUtils {
                         try {
                             fs = FileSystems.newFileSystem(jarUri, Collections.emptyMap());
                         } catch (IOException e2) {
-                            throw new RuntimeException("Could not create FileSystem for " + jarUri, e2);
+                            throw new IllegalStateException("Could not create FileSystem for " + jarUri, e2);
                         }
                     }
                     fileSystems.put(jarUri, fs);
