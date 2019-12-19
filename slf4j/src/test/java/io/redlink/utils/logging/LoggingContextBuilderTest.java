@@ -25,7 +25,7 @@ import org.slf4j.MDC;
 
 import static org.junit.Assert.assertThat;
 
-public class LoggingContextTest {
+public class LoggingContextBuilderTest {
 
     @Before
     public void setUp() throws Exception {
@@ -33,55 +33,24 @@ public class LoggingContextTest {
     }
 
     @Test
-    public void testLoggingContext() {
-        MDC.put("foo", "before");
-
-        try (LoggingContext cty = LoggingContext.create()) {
-            assertThat("Previous Context not available",
-                    MDC.get("foo"), CoreMatchers.is("before"));
-            MDC.put("foo", "within");
-            assertThat("New Context not set",
-                    MDC.get("foo"), CoreMatchers.is("within"));
-        }
-
-        assertThat("Previous Context not restored",
-                MDC.get("foo"), CoreMatchers.is("before"));
-    }
-
-    @Test
-    public void testCleanLoggingContext() {
-        MDC.put("foo", "before");
-
-        try (LoggingContext cty = new LoggingContext(true)) {
-            assertThat("Previous Context not cleared",
-                    MDC.get("foo"), CoreMatchers.nullValue());
-            MDC.put("foo", "within");
-            assertThat("New Context not set",
-                    MDC.get("foo"), CoreMatchers.is("within"));
-        }
-
-        assertThat("Previous Context not restored",
-                MDC.get("foo"), CoreMatchers.is("before"));
-
-    }
-
-    @Test
-    public void testWithEmpty() {
-        try (LoggingContext empty = LoggingContext.empty()) {
-            assertThat("Empty Context", MDC.get("foo"), CoreMatchers.nullValue());
-
-            MDC.put("foo", "bar");
-            assertThat("foo Context", MDC.get("foo"), CoreMatchers.is("bar"));
-        }
-        assertThat("Cleaned Context", MDC.get("foo"), CoreMatchers.nullValue());
-    }
-
-    @Test
     public void testWrapRunnable() {
         final String value = UUID.randomUUID().toString();
+        final String value2 = UUID.randomUUID().toString();
         MDC.put("mdc", value);
-        LoggingContext.wrap(() -> {
-            assertThat(MDC.get("mdc"), CoreMatchers.is(value));
+        LoggingContext.withMDC("mdc", value2).wrap(() -> {
+            assertThat(MDC.get("mdc"), CoreMatchers.is(value2));
+            MDC.clear();
+        }).run();
+        assertThat(MDC.get("mdc"), CoreMatchers.is(value));
+    }
+
+    @Test
+    public void testCleanWrapRunnable() {
+        final String value = UUID.randomUUID().toString();
+        final String value2 = UUID.randomUUID().toString();
+        MDC.put("mdc", value);
+        LoggingContext.emptyMDC().withMDC("mdc", value2).wrap(() -> {
+            assertThat(MDC.get("mdc"), CoreMatchers.is(value2));
             MDC.clear();
         }).run();
         assertThat(MDC.get("mdc"), CoreMatchers.is(value));
@@ -90,9 +59,10 @@ public class LoggingContextTest {
     @Test
     public void testWrapCallable() throws Exception {
         final String value = UUID.randomUUID().toString();
+        final String value2 = UUID.randomUUID().toString();
         MDC.put("mdc", value);
-        LoggingContext.wrap((Callable<String>) () -> {
-            assertThat(MDC.get("mdc"), CoreMatchers.is(value));
+        LoggingContext.withMDC("mdc", value2).wrap((Callable<String>) () -> {
+            assertThat(MDC.get("mdc"), CoreMatchers.is(value2));
             MDC.clear();
             return "mdc";
         }).call();
@@ -103,9 +73,10 @@ public class LoggingContextTest {
     @Test
     public void testWrapFunction() {
         final String value = UUID.randomUUID().toString();
+        final String value2 = UUID.randomUUID().toString();
         MDC.put("mdc", value);
-        LoggingContext.wrap((String s) -> {
-            assertThat(MDC.get("mdc"), CoreMatchers.is(value));
+        LoggingContext.withMDC("mdc", value2).wrap((String s) -> {
+            assertThat(MDC.get("mdc"), CoreMatchers.is(value2));
             MDC.put("mdc", s);
             assertThat(MDC.get("mdc"), CoreMatchers.is(s));
             return s.length();
@@ -117,9 +88,10 @@ public class LoggingContextTest {
     @Test
     public void testWrapSupplier() {
         final String value = UUID.randomUUID().toString();
+        final String value2 = UUID.randomUUID().toString();
         MDC.put("mdc", value);
-        LoggingContext.wrap((Supplier<String>) () -> {
-            assertThat(MDC.get("mdc"), CoreMatchers.is(value));
+        LoggingContext.withMDC("mdc", value2).wrap((Supplier<String>) () -> {
+            assertThat(MDC.get("mdc"), CoreMatchers.is(value2));
             MDC.clear();
             return "mdc";
         }).get();
@@ -130,9 +102,10 @@ public class LoggingContextTest {
     @Test
     public void testWrapConsumer() {
         final String value = UUID.randomUUID().toString();
+        final String value2 = UUID.randomUUID().toString();
         MDC.put("mdc", value);
-        LoggingContext.wrap((String s) -> {
-            assertThat(MDC.get("mdc"), CoreMatchers.is(value));
+        LoggingContext.withMDC("mdc", value2).wrap((String s) -> {
+            assertThat(MDC.get("mdc"), CoreMatchers.is(value2));
             MDC.put("mdc", s);
         }).accept(UUID.randomUUID().toString());
 

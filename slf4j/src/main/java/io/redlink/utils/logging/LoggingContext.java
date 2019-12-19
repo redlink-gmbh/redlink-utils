@@ -57,7 +57,7 @@ public class LoggingContext implements AutoCloseable {
      * Create a new {@link LoggingContext} populated with the current MDC entries
      */
     public static LoggingContext create() {
-        return new LoggingContext(false);
+        return new LoggingContext();
     }
 
     public static Runnable wrap(final Runnable runnable) {
