@@ -16,21 +16,21 @@
 
 package io.redlink.utils;
 
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.junit.Assume;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 
 import static org.apache.commons.lang3.StringUtils.prependIfMissing;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assume.assumeNotNull;
 
 /**
  */
@@ -54,7 +54,7 @@ public class ResourceLoaderUtilsTest {
 
     @Test
     public void testGetResourceAsPath_Class() throws Exception {
-        Assume.assumeNotNull("Could not read resource the classic way",
+        assumeNotNull("Could not read resource the classic way",
                 ResourceLoaderUtilsTest.class.getResource(resource));
         final Path resourceAsPath = ResourceLoaderUtils.getResourceAsPath(resource, ResourceLoaderUtilsTest.class);
         assertNotNull("getResourceAsPath() returned null", resourceAsPath);
@@ -76,7 +76,7 @@ public class ResourceLoaderUtilsTest {
             resource = prependIfMissing(this.resource, this.getClass().getPackage().getName().replace('.', '/') + "/");
         }
 
-        Assume.assumeNotNull("Could not read resource the classic way",
+        assumeNotNull("Could not read resource the classic way",
                 ClassLoader.getSystemClassLoader().getResource(resource));
 
         final Path resourceAsPath = ResourceLoaderUtils.getResourceAsPath(resource, ClassLoader.getSystemClassLoader());
@@ -99,7 +99,7 @@ public class ResourceLoaderUtilsTest {
             resource = prependIfMissing(this.resource, this.getClass().getPackage().getName().replace('.', '/') + "/");
         }
 
-        Assume.assumeNotNull("Could not read resource the classic way",
+        assumeNotNull("Could not read resource the classic way",
                 Thread.currentThread().getContextClassLoader().getResource(resource));
 
         final Path resourceAsPath = ResourceLoaderUtils.getResourceAsPath(resource);
@@ -113,4 +113,9 @@ public class ResourceLoaderUtilsTest {
         }
     }
 
+    @Test
+    public void testNullResource() {
+        assertNull("non-existing resource",
+                ResourceLoaderUtils.getResourceAsPath(resource + ".does-not-exist"));
+    }
 }
