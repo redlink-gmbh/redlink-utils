@@ -26,6 +26,14 @@ public final class LoggingContextBuilder {
         return this;
     }
 
+    public LoggingContextBuilder withMDC(Map<String, String> context) {
+        if (context != null) {
+            contextMap.putAll(context);
+        }
+        return this;
+    }
+
+
     public <T> Callable<T> wrap(final Callable<T> callable) {
         return () -> {
             try (LoggingContext ignored = new LoggingContext(clean)) {

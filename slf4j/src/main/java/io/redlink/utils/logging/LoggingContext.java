@@ -46,6 +46,26 @@ public class LoggingContext implements AutoCloseable {
         }
     }
 
+    public Runnable wrapInCopy(Runnable runnable) {
+        return LoggingContext.withMDC(MDC.getCopyOfContextMap()).wrap(runnable);
+    }
+
+    public <T> Callable<T> wrapInCopy(Callable<T> callable) {
+        return LoggingContext.withMDC(MDC.getCopyOfContextMap()).wrap(callable);
+    }
+
+    public <T, R> Function<T, R> wrapInCopy(Function<T, R> function) {
+        return LoggingContext.withMDC(MDC.getCopyOfContextMap()).wrap(function);
+    }
+
+    public <T> Supplier<T> wrapInCopy(Supplier<T> callable) {
+        return LoggingContext.withMDC(MDC.getCopyOfContextMap()).wrap(callable);
+    }
+
+    public <T> Consumer<T> wrapInCopy(Consumer<T> callable) {
+        return LoggingContext.withMDC(MDC.getCopyOfContextMap()).wrap(callable);
+    }
+
     /**
      * Create a new, empty {@link LoggingContext}
      */
@@ -122,6 +142,10 @@ public class LoggingContext implements AutoCloseable {
 
     public static LoggingContextBuilder withMDC(String key, String value) {
         return LoggingContextBuilder.create(false).withMDC(key, value);
+    }
+
+    public static LoggingContextBuilder withMDC(Map<String, String> context) {
+        return LoggingContextBuilder.create(false).withMDC(context);
     }
 
     public static LoggingContextBuilder emptyMDC() {

@@ -15,6 +15,8 @@
  */
 package io.redlink.utils.logging;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.Callable;
 import java.util.function.Supplier;
@@ -28,8 +30,22 @@ import static org.junit.Assert.assertThat;
 public class LoggingContextBuilderTest {
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         MDC.clear();
+    }
+
+    @Test
+    public void testWithMDC() {
+        final String value = UUID.randomUUID().toString();
+        Map<String, String> ctx = new HashMap<>();
+        ctx.put("mdc", value);
+
+        assertThat(MDC.get("mdc"), CoreMatchers.nullValue());
+        LoggingContext.withMDC(ctx).wrap(() -> {
+            assertThat(MDC.get("mdc"), CoreMatchers.is(value));
+            MDC.clear();
+        }).run();
+        assertThat(MDC.get("mdc"), CoreMatchers.nullValue());
     }
 
     @Test
