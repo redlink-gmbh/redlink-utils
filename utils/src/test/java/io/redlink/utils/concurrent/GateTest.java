@@ -66,7 +66,6 @@ public class GateTest {
         final Future<Long> f15 = createWorker(gate, Duration.ofSeconds(15), 15L);
         final Future<Long> f20 = createWorker(gate, Duration.ofSeconds(15), 20L);
 
-        assertThat("Two threads waiting", gate.getWaitingCount(), Matchers.is(2L));
         try {
             f15.get(1, TimeUnit.MILLISECONDS);
             fail("The gate was broken!");
@@ -75,6 +74,7 @@ public class GateTest {
         } catch (TimeoutException e) {
             // expected
         }
+        assertThat("Two threads waiting", gate.getWaitingCount(), Matchers.is(2L));
 
         gate.open();
         try {
@@ -162,6 +162,7 @@ public class GateTest {
                 future.completeExceptionally(e);
             }
         }).start();
+
         blocker.await();
         return future;
     }
