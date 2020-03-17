@@ -192,7 +192,7 @@ public final class PathUtils {
             if (exc instanceof FileSystemLoopException) {
                 LOG.error("cycle detected: {}", file);
             } else {
-                LOG.error("Unable to copy: {}: {}", file, exc);
+                LOG.error("Unable to copy: {}", file, exc);
             }
             return CONTINUE;
         }
