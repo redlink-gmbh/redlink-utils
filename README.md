@@ -35,6 +35,7 @@ Convenience-Wrapper for commonly used [testcontainers](https://github.com/testco
 * **MongoContainer**
 * **[VindContainer](https://github.com/RBMHTechnology/vind)**, 
 based on [vind-solr-server](https://github.com/redlink-gmbh/vind-solr-server).
+* **ZookeeperContainer**
 
 ## License
 Free use of this software is granted under the terms of the Apache License Version 2.0.
