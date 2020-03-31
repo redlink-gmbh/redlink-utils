@@ -46,6 +46,26 @@ public class LoggingContext implements AutoCloseable {
         }
     }
 
+    public Runnable wrapInCopy(Runnable runnable) {
+        return LoggingContext.withMDC(MDC.getCopyOfContextMap()).wrap(runnable);
+    }
+
+    public <T> Callable<T> wrapInCopy(Callable<T> callable) {
+        return LoggingContext.withMDC(MDC.getCopyOfContextMap()).wrap(callable);
+    }
+
+    public <T, R> Function<T, R> wrapInCopy(Function<T, R> function) {
+        return LoggingContext.withMDC(MDC.getCopyOfContextMap()).wrap(function);
+    }
+
+    public <T> Supplier<T> wrapInCopy(Supplier<T> callable) {
+        return LoggingContext.withMDC(MDC.getCopyOfContextMap()).wrap(callable);
+    }
+
+    public <T> Consumer<T> wrapInCopy(Consumer<T> callable) {
+        return LoggingContext.withMDC(MDC.getCopyOfContextMap()).wrap(callable);
+    }
+
     /**
      * Create a new, empty {@link LoggingContext}
      */
@@ -57,7 +77,7 @@ public class LoggingContext implements AutoCloseable {
      * Create a new {@link LoggingContext} populated with the current MDC entries
      */
     public static LoggingContext create() {
-        return new LoggingContext(false);
+        return new LoggingContext();
     }
 
     public static Runnable wrap(final Runnable runnable) {
@@ -66,7 +86,7 @@ public class LoggingContext implements AutoCloseable {
 
     public static Runnable wrap(final Runnable runnable, boolean clear) {
         return () -> {
-            try (LoggingContext ctx = new LoggingContext(clear)) {
+            try (LoggingContext ignore = new LoggingContext(clear)) {
                 runnable.run();
             }
         };
@@ -78,7 +98,7 @@ public class LoggingContext implements AutoCloseable {
 
     public static <T> Callable<T> wrap(final Callable<T> callable, boolean clear) {
         return () -> {
-            try (LoggingContext ctx = new LoggingContext(clear)) {
+            try (LoggingContext ignore = new LoggingContext(clear)) {
                 return callable.call();
             }
         };
@@ -90,7 +110,7 @@ public class LoggingContext implements AutoCloseable {
 
     public static <T, R> Function<T, R> wrap(final Function<T, R> function, boolean clear) {
         return (T t) -> {
-            try (LoggingContext ctx = new LoggingContext(clear)) {
+            try (LoggingContext ignore = new LoggingContext(clear)) {
                 return function.apply(t);
             }
         };
@@ -102,7 +122,7 @@ public class LoggingContext implements AutoCloseable {
 
     public static <T> Supplier<T> wrap(final Supplier<T> supplier, boolean clear) {
         return () -> {
-            try (LoggingContext ctx = new LoggingContext(clear)) {
+            try (LoggingContext ignore = new LoggingContext(clear)) {
                 return supplier.get();
             }
         };
@@ -114,11 +134,22 @@ public class LoggingContext implements AutoCloseable {
 
     public static <T> Consumer<T> wrap(final Consumer<T> consumer, boolean clear) {
         return (T t) -> {
-            try (LoggingContext ctx = new LoggingContext(clear)) {
+            try (LoggingContext ignore = new LoggingContext(clear)) {
                 consumer.accept(t);
             }
         };
     }
 
+    public static LoggingContextBuilder withMDC(String key, String value) {
+        return LoggingContextBuilder.create(false).withMDC(key, value);
+    }
+
+    public static LoggingContextBuilder withMDC(Map<String, String> context) {
+        return LoggingContextBuilder.create(false).withMDC(context);
+    }
+
+    public static LoggingContextBuilder emptyMDC() {
+        return LoggingContextBuilder.create(true);
+    }
 
 }
