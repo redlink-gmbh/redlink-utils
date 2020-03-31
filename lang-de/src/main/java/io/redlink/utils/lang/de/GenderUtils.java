@@ -22,7 +22,10 @@ import org.apache.commons.lang3.StringUtils;
 
 /**
  * Gender-related helper methods (German)
+ * @deprecated this is a very use-case specific implementation
  */
+@Deprecated
+@SuppressWarnings("java:S1133")
 public final class GenderUtils {
 
     private static final Pattern TOKENIZER = Pattern.compile("[,;]?\\s+");
@@ -63,7 +66,7 @@ public final class GenderUtils {
     }
 
     private static String getMaleLabel(String label) {
-        if (label.indexOf(',') > 0 && label.indexOf(',') == label.lastIndexOf(',')) {
+        if (label.indexOf(',') >= 0 && label.indexOf(',') == label.lastIndexOf(',')) {
             String[] pair = label.split(",");
             int dist = StringUtils.getLevenshteinDistance(pair[0].trim(), pair[1].trim());
             int wc = count(' ', pair[0])+1;
@@ -97,7 +100,7 @@ public final class GenderUtils {
     }
 
     private static String getFemaleLabel(String label) {
-        if (label.indexOf(',') > 0 && label.indexOf(',') == label.lastIndexOf(',')) {
+        if (label.indexOf(',') >= 0 && label.indexOf(',') == label.lastIndexOf(',')) {
             String[] pair = label.split(",");
             int dist = StringUtils.getLevenshteinDistance(pair[0].trim(), pair[1].trim());
             int wc = count(' ', pair[1])+1;
@@ -128,6 +131,7 @@ public final class GenderUtils {
      * Get the male form of a genderised word (e.g. AntragstellerIn -> Antragsteller)
      * @param word the word to degenerize
      */
+    @SuppressWarnings("java:S3776")
     private static String getMaleWord(String word) {
         if(word.indexOf(' ') >= 0) {
             throw new IllegalArgumentException("can only convert a single word");
@@ -218,6 +222,7 @@ public final class GenderUtils {
      * Get the male form of a genderised word (e.g. AntragstellerIn -> Antragsteller)
      * @param word the word to degenerize
      */
+    @SuppressWarnings({"java:S3776", "java:S1192"})
     private static String getFemaleWord(String word) {
         if(word.indexOf(' ') >= 0) {
             throw new IllegalArgumentException("can only convert a single word");

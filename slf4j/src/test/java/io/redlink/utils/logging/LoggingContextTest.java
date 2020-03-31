@@ -17,6 +17,12 @@ package io.redlink.utils.logging;
 
 import java.util.UUID;
 import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.function.Supplier;
 import org.hamcrest.CoreMatchers;
 import org.junit.Before;
@@ -28,7 +34,7 @@ import static org.junit.Assert.assertThat;
 public class LoggingContextTest {
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         MDC.clear();
     }
 
@@ -36,7 +42,7 @@ public class LoggingContextTest {
     public void testLoggingContext() {
         MDC.put("foo", "before");
 
-        try (LoggingContext cty = new LoggingContext()) {
+        try (LoggingContext ignored = LoggingContext.create()) {
             assertThat("Previous Context not available",
                     MDC.get("foo"), CoreMatchers.is("before"));
             MDC.put("foo", "within");
@@ -52,7 +58,7 @@ public class LoggingContextTest {
     public void testCleanLoggingContext() {
         MDC.put("foo", "before");
 
-        try (LoggingContext cty = new LoggingContext(true)) {
+        try (LoggingContext ignored = new LoggingContext(true)) {
             assertThat("Previous Context not cleared",
                     MDC.get("foo"), CoreMatchers.nullValue());
             MDC.put("foo", "within");
@@ -67,7 +73,7 @@ public class LoggingContextTest {
 
     @Test
     public void testWithEmpty() {
-        try (LoggingContext empty = LoggingContext.empty()) {
+        try (LoggingContext ignored = LoggingContext.empty()) {
             assertThat("Empty Context", MDC.get("foo"), CoreMatchers.nullValue());
 
             MDC.put("foo", "bar");
@@ -137,5 +143,123 @@ public class LoggingContextTest {
         }).accept(UUID.randomUUID().toString());
 
         assertThat(MDC.get("mdc"), CoreMatchers.is(value));
+    }
+
+    @Test
+    public void testWrapInCopyRunable() throws Throwable {
+        final String value = UUID.randomUUID().toString();
+        final String value2 = UUID.randomUUID().toString();
+
+        MDC.put("mdc", value);
+        final ExecutorService executor = Executors.newSingleThreadExecutor();
+        try (LoggingContext ctx = LoggingContext.create()) {
+            MDC.put("mdc", value2);
+
+            final Future<?> future = executor.submit(
+                    ctx.wrapInCopy(() -> {
+                        assertThat(MDC.get("mdc"), CoreMatchers.is(value2));
+                        MDC.put("mdc", UUID.randomUUID().toString());
+                    }));
+            assertThat(MDC.get("mdc"), CoreMatchers.is(value2));
+            future.get();
+            assertThat(MDC.get("mdc"), CoreMatchers.is(value2));
+        } catch (ExecutionException e) {
+            throw e.getCause();
+        } finally {
+            executor.shutdownNow();
+        }
+    }
+
+    @Test
+    public void testWrapInCopyCallable() throws Throwable {
+        final String value = UUID.randomUUID().toString();
+        final String value2 = UUID.randomUUID().toString();
+
+        MDC.put("mdc", value);
+        final ExecutorService executor = Executors.newSingleThreadExecutor();
+        try (LoggingContext ctx = LoggingContext.create()) {
+            MDC.put("mdc", value2);
+
+            final Future<?> future = executor.submit(
+                    ctx.wrapInCopy((Callable<String>) () -> {
+                        assertThat(MDC.get("mdc"), CoreMatchers.is(value2));
+                        MDC.put("mdc", UUID.randomUUID().toString());
+                        return "hello";
+                    }));
+            assertThat(MDC.get("mdc"), CoreMatchers.is(value2));
+            future.get();
+            assertThat(MDC.get("mdc"), CoreMatchers.is(value2));
+        } catch (ExecutionException e) {
+            throw e.getCause();
+        } finally {
+            executor.shutdownNow();
+        }
+    }
+
+    @Test
+    public void testWrapInCopyFunction() {
+        final String value = UUID.randomUUID().toString();
+        final String value2 = UUID.randomUUID().toString();
+        final String value3 = UUID.randomUUID().toString();
+
+        MDC.put("mdc", value);
+        try (LoggingContext ctx = LoggingContext.create()) {
+            MDC.put("mdc", value2);
+            final Function<String, String> function = ctx.wrapInCopy((name) -> {
+                assertThat(MDC.get("mdc"), CoreMatchers.is(value2));
+                MDC.put("mdc", UUID.randomUUID().toString());
+                return "hello " + name;
+            });
+            MDC.put("mdc", value3);
+            assertThat(MDC.get("mdc"), CoreMatchers.is(value3));
+
+            assertThat(function.apply("test"), CoreMatchers.is("hello test"));
+
+            assertThat(MDC.get("mdc"), CoreMatchers.is(value3));
+        }
+    }
+
+    @Test
+    public void testWrapInCopySupplier() {
+        final String value = UUID.randomUUID().toString();
+        final String value2 = UUID.randomUUID().toString();
+        final String value3 = UUID.randomUUID().toString();
+
+        MDC.put("mdc", value);
+        try (LoggingContext ctx = LoggingContext.create()) {
+            MDC.put("mdc", value2);
+            final Supplier<String> supplier = ctx.wrapInCopy((Supplier<String>) () -> {
+                assertThat(MDC.get("mdc"), CoreMatchers.is(value2));
+                MDC.put("mdc", UUID.randomUUID().toString());
+                return "hello";
+            });
+            MDC.put("mdc", value3);
+            assertThat(MDC.get("mdc"), CoreMatchers.is(value3));
+
+            assertThat(supplier.get(), CoreMatchers.is("hello"));
+
+            assertThat(MDC.get("mdc"), CoreMatchers.is(value3));
+        }
+    }
+
+    @Test
+    public void testWrapInCopyConsumer() {
+        final String value = UUID.randomUUID().toString();
+        final String value2 = UUID.randomUUID().toString();
+        final String value3 = UUID.randomUUID().toString();
+
+        MDC.put("mdc", value);
+        try (LoggingContext ctx = LoggingContext.create()) {
+            MDC.put("mdc", value2);
+            final Consumer<String> consumer = ctx.wrapInCopy((String name) -> {
+                assertThat(MDC.get("mdc"), CoreMatchers.is(value2));
+                MDC.put("mdc", UUID.randomUUID().toString());
+            });
+
+            MDC.put("mdc", value3);
+            assertThat(MDC.get("mdc"), CoreMatchers.is(value3));
+            consumer.accept("test");
+            assertThat(MDC.get("mdc"), CoreMatchers.is(value3));
+        }
     }
 }

@@ -1,7 +1,7 @@
 # Redlink Utils
 _An assortment of useful utils_
 
-[![Build Status](https://travis-ci.org/redlink-gmbh/redlink-utils.svg?branch=master)](https://travis-ci.org/redlink-gmbh/redlink-utils)
+[![Build Status](https://travis-ci.com/redlink-gmbh/redlink-utils.svg?branch=master)](https://travis-ci.com/redlink-gmbh/redlink-utils)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=io.redlink.utils%3Aredlink-utils&metric=alert_status)](https://sonarcloud.io/dashboard?id=io.redlink.utils%3Aredlink-utils)
 
 [![Maven Central](https://img.shields.io/maven-central/v/io.redlink.utils/redlink-utils.png)](http://search.maven.org/#search%7Cga%7C1%7Cg%3A%22io.redlink.utils%22)
@@ -35,6 +35,7 @@ Convenience-Wrapper for commonly used [testcontainers](https://github.com/testco
 * **MongoContainer**
 * **[VindContainer](https://github.com/RBMHTechnology/vind)**, 
 based on [vind-solr-server](https://github.com/redlink-gmbh/vind-solr-server).
+* **ZookeeperContainer**
 
 ## License
 Free use of this software is granted under the terms of the Apache License Version 2.0.
