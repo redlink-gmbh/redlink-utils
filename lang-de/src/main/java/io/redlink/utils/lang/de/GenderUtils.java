@@ -25,6 +25,7 @@ import org.apache.commons.lang3.StringUtils;
  * @deprecated this is a very use-case specific implementation
  */
 @Deprecated
+@SuppressWarnings("java:S1133")
 public final class GenderUtils {
 
     private static final Pattern TOKENIZER = Pattern.compile("[,;]?\\s+");
