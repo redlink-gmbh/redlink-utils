@@ -40,7 +40,7 @@ public class ZookeeperContainer extends GenericContainer<ZookeeperContainer> {
     public ZookeeperContainer(String dockerImageName) {
         super(dockerImageName);
 
-        waitStrategy = Wait.forLogMessage(".*binding to port /0.0.0.0:" + CONNECT_PORT + "\n", 1);
+        waitStrategy = Wait.forLogMessage(".*binding to port .*:" + CONNECT_PORT + "\n", 1);
         addExposedPorts(CONNECT_PORT, ADMIN_PORT);
         addEnv("ZOO_4LW_COMMANDS_WHITELIST", String.join(",", FOUR_LETTER_COMMANDS));
     }
