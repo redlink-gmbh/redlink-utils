@@ -38,7 +38,7 @@
         <dependency>
             <groupId>io.redlink.utils</groupId>
             <artifactId>utils</artifactId>
-            <version>(1,)</version> <!-- the 1.x releases to have a bug that breaks SolrContainer -->
+            <version>${project.version}</version> <!-- the 1.x releases to have a bug that breaks SolrContainer -->
         </dependency>
 
         <dependency>
@@ -56,7 +56,7 @@
         <dependency>
             <groupId>org.apache.solr</groupId>
             <artifactId>solr-solrj</artifactId>
-            <version>[7.7,8)</version>
+            <version>7.7.3</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -68,7 +68,7 @@
         <dependency>
             <groupId>org.apache.zookeeper</groupId>
             <artifactId>zookeeper</artifactId>
-            <version>[3.4,4)</version>
+            <version>3.4.14</version>
             <scope>test</scope>
             <exclusions>
                 <exclusion>
