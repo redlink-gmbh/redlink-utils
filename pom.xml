@@ -20,7 +20,7 @@
 
     <groupId>io.redlink.utils</groupId>
     <artifactId>redlink-utils</artifactId>
-    <version>2.2.0-SNAPSHOT</version>
+    <version>3.0.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>Redlink Utilities</name>
@@ -29,8 +29,8 @@
     <inceptionYear>2016</inceptionYear>
 
     <organization>
-        <name>redlink GmbH</name>
-        <url>http://redlink.at</url>
+        <name>Redlink GmbH</name>
+        <url>https://redlink.at</url>
     </organization>
 
     <licenses>
@@ -81,7 +81,7 @@
         <project.build.sourceEncoding>utf8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>utf-8</project.reporting.outputEncoding>
 
-        <java.version>1.8</java.version>
+        <java.version>11</java.version>
 
         <slf4j.version>1.7.25</slf4j.version>
         <commons-io.version>2.5</commons-io.version>
