@@ -54,10 +54,10 @@ public class SolrContainer extends FailureDetectingExternalResource {
             before();
         } catch (Exception t) {
             if(LOG.isDebugEnabled()) {
-                LOG.error("Failed to initialize SolrContainer(coreName: {} | confDir: {} | tmpFolder: {})",
+                LOG.error("Failed to initialize SolrContainer(coreName: {} | confDir: {} | tmpFolder: {})",
                         coreName, confDir, temporaryFolder, t);
             } else {
-                LOG.error("Failed to initialize SolrContainer(coreName: {} | confDir: {} | tmpFolder: {} | {} - {})",
+                LOG.error("Failed to initialize SolrContainer(coreName: {} | confDir: {} | tmpFolder: {} | {} - {})",
                         coreName, confDir, temporaryFolder, t.getClass().getSimpleName(), t.getMessage());
             }
             Assert.fail("Failed to initialize (" + t.getClass().getSimpleName() + " - " + t.getMessage() + ")");

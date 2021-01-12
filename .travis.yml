@@ -1,7 +1,7 @@
 language: java
 
 jdk:
-  - openjdk8
+  - openjdk11
 
 services:
   - docker
@@ -13,7 +13,7 @@ jobs:
     - stage: sonarcloud
       git:
         depth: false
-      jdk: openjdk8
+      jdk: openjdk11
       script:
         - SONAR_PARAMS="";
           if [ "${TRAVIS_PULL_REQUEST:-false}" != "false" ]; then
@@ -23,9 +23,9 @@ jobs:
             SONAR_PARAMS="$SONAR_PARAMS -Dsonar.pullrequest.provider=github";
             SONAR_PARAMS="$SONAR_PARAMS -Dsonar.pullrequest.github.repository=${TRAVIS_REPO_SLUG}";
           else
-            if  [ -z "$TRAVIS_TAG" -a "${TRAVIS_BRANCH:-master}" != "master" ]; then
+            if  [ "${TRAVIS_BRANCH:-master}" != "master" ]; then
               SONAR_PARAMS="$SONAR_PARAMS -Dsonar.branch.name=${TRAVIS_BRANCH}";
-              if  [ -z "$TRAVIS_TAG" -a "${TRAVIS_BRANCH:-develop}" != "develop" ]; then
+              if  [[ ! "${TRAVIS_BRANCH:-master}" =~ maintenance/* ]]; then
                 SONAR_PARAMS="$SONAR_PARAMS -Dsonar.branch.target=master";
               fi;
             fi;
