@@ -1,7 +1,7 @@
 language: java
 
 jdk:
-  - openjdk8
+  - openjdk11
 
 services:
   - docker
@@ -13,7 +13,7 @@ jobs:
     - stage: sonarcloud
       git:
         depth: false
-      jdk: openjdk8
+      jdk: openjdk11
       script:
         - SONAR_PARAMS="";
           if [ "${TRAVIS_PULL_REQUEST:-false}" != "false" ]; then
