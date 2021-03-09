@@ -17,6 +17,7 @@
 package io.redlink.utils;
 
 import org.apache.commons.io.IOUtils;
+import org.hamcrest.Matchers;
 import org.junit.BeforeClass;
 import org.junit.ClassRule;
 import org.junit.Test;
@@ -31,6 +32,7 @@ import java.nio.file.attribute.FileTime;
 import java.util.UUID;
 
 import static org.junit.Assert.*;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 /**
  *
@@ -80,16 +82,15 @@ public class PathUtilsTest {
 
         PathUtils.copy(sourceFile, dest);
 
-        assertTrue(Files.exists(dest));
+        assertTrue("destination not found", Files.exists(dest));
         try (
                 InputStream expected = Files.newInputStream(sourceFile);
                 InputStream real = Files.newInputStream(dest)
         ) {
-            assertTrue(IOUtils.contentEquals(expected, real));
+            assertTrue("content mismatch", IOUtils.contentEquals(expected, real));
         }
 
-        assertNotEquals(Files.getLastModifiedTime(sourceFile), Files.getLastModifiedTime(dest));
-
+        assertThat("mtime", Files.getLastModifiedTime(dest), Matchers.greaterThan(Files.getLastModifiedTime(sourceFile)));
     }
 
     @Test
@@ -99,15 +100,15 @@ public class PathUtilsTest {
 
         PathUtils.copy(sourceFile, dest, true);
 
-        assertTrue(Files.exists(dest));
+        assertTrue("destination not found", Files.exists(dest));
         try (
                 InputStream expected = Files.newInputStream(sourceFile);
                 InputStream real = Files.newInputStream(dest)
         ) {
-            assertTrue(IOUtils.contentEquals(expected, real));
+            assertTrue("content mismatch", IOUtils.contentEquals(expected, real));
         }
 
-        assertEquals(Files.getLastModifiedTime(sourceFile), Files.getLastModifiedTime(dest));
+        assertThat("mtime", Files.getLastModifiedTime(dest), Matchers.comparesEqualTo(Files.getLastModifiedTime(sourceFile)));
 
     }
 
@@ -176,14 +177,14 @@ public class PathUtilsTest {
     @Test
     public void testDeleteRecursive() throws Exception {
         final Path dest1 = temporaryFolder.newFolder().toPath();
-        assertTrue(Files.exists(dest1));
+        assertTrue("source not found", Files.exists(dest1));
         PathUtils.deleteRecursive(dest1);
-        assertFalse(Files.exists(dest1));
+        assertFalse("target not deleted", Files.exists(dest1));
 
         final Path dest2 = temporaryFolder.newFolder().toPath();
         PathUtils.copyRecursive(sourceFolder, dest2);
-        assertTrue(Files.exists(dest2));
+        assertTrue("source not found", Files.exists(dest2));
         PathUtils.deleteRecursive(dest2);
-        assertFalse(Files.exists(dest2));
+        assertFalse("target not deleted", Files.exists(dest2));
     }
 }

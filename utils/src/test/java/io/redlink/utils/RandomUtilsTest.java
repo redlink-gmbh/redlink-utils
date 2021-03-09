@@ -13,35 +13,34 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package io.redlink.utils;
 
+import java.util.Random;
 import org.junit.Test;
 
-import java.util.Random;
-
 import static org.junit.Assert.assertEquals;
+
 
 public class RandomUtilsTest {
 
     @Test
-    public void nextString() throws Exception {
+    public void nextString() {
         for (int i = 0; i < 50; i++) {
-            assertEquals(i, RandomUtils.nextString(i).length());
+            assertEquals("random string length", i, RandomUtils.nextString(i).length());
         }
     }
 
     @Test
-    public void nextStringRnd() throws Exception {
+    public void nextStringRnd() {
         Random rnd = new Random(42);
-        assertEquals("6FyS", RandomUtils.nextString(rnd, 4));
-        assertEquals("2X3wn3y0", RandomUtils.nextString(rnd, 8));
-        assertEquals("cWWOeQNjeDWN", RandomUtils.nextString(rnd, 12));
-        assertEquals("TN6iPQSqmhdR4Ppo", RandomUtils.nextString(rnd, 16));
-        assertEquals("RjpBpcptlzNu6wyGvRfJZR", RandomUtils.nextString(rnd, 22));
+        assertEquals("pre-seed random string", "6FyS", RandomUtils.nextString(rnd, 4));
+        assertEquals("pre-seed random string", "2X3wn3y0", RandomUtils.nextString(rnd, 8));
+        assertEquals("pre-seed random string", "cWWOeQNjeDWN", RandomUtils.nextString(rnd, 12));
+        assertEquals("pre-seed random string", "TN6iPQSqmhdR4Ppo", RandomUtils.nextString(rnd, 16));
+        assertEquals("pre-seed random string", "RjpBpcptlzNu6wyGvRfJZR", RandomUtils.nextString(rnd, 22));
 
         for (int i = 0; i < 50; i++) {
-            assertEquals(i, RandomUtils.nextString(rnd, i).length());
+            assertEquals("random string length", i, RandomUtils.nextString(rnd, i).length());
         }
     }
 
