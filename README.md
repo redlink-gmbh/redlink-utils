@@ -17,7 +17,7 @@ A mixed set of useful helpers, e.g. for calculating hashes/checksums, copying fi
 
 ### `Lang DE`
 
-Some helpers to handle German specifics, currently only (de-)genering is available:
+Some helpers to handle German specifics, currently only (de-)gendering is available:
 `"Einzelhandelskaufmann/-frau" --> [ "Einzelhandelskaufmann", "Einzelhandelskauffrau" ]`
 
 ### Logging
