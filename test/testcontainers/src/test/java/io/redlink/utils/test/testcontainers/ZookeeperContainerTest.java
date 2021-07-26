@@ -38,7 +38,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testcontainers.shaded.org.apache.commons.lang.StringUtils;
 
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 public class ZookeeperContainerTest {
@@ -98,7 +98,7 @@ public class ZookeeperContainerTest {
     }
 
     private static Matcher<JsonNode> isNullNode() {
-        return new TypeSafeDiagnosingMatcher<JsonNode>() {
+        return new TypeSafeDiagnosingMatcher<>() {
             @Override
             protected boolean matchesSafely(JsonNode item, Description mismatchDescription) {
                 mismatchDescription.appendText(" node of type ")
@@ -119,7 +119,7 @@ public class ZookeeperContainerTest {
     }
 
     private static Matcher<JsonNode> isTextNode(String text) {
-        return new TypeSafeDiagnosingMatcher<JsonNode>(JsonNode.class) {
+        return new TypeSafeDiagnosingMatcher<>(JsonNode.class) {
             @Override
             public void describeTo(Description description) {
                 description.appendText(" node of type ")
