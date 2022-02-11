@@ -76,7 +76,7 @@ public class SolrContainer extends FailureDetectingExternalResource {
         container.withFileSystemBind(mountableConf.getAbsolutePath(), "/core-conf", BindMode.READ_ONLY);
         container.withCommand("solr-precreate", coreName, "/core-conf");
         container.waitingFor(
-                Wait.forLogMessage(".*SolrCore \\Q[" + coreName + "]\\E Registered new searcher.*\n", 1)
+                Wait.forLogMessage(".*SolrCore \\Q[" + coreName + "]\\E(?: )+Registered new searcher.*\n", 1)
                         .withStartupTimeout(startupTimeout)
         );
 
