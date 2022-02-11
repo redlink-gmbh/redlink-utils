@@ -63,7 +63,7 @@ public class VindContainer extends FailureDetectingExternalResource {
                 .map(Pattern::quote)
                 .collect(Collectors.joining("|", "(", ")"));
         container.waitingFor(
-                Wait.forLogMessage(".*SolrCore \\Q[\\E" + coreNamesRegex + "\\Q]\\E Registered new searcher.*\n", coreNames.size())
+                Wait.forLogMessage(".*SolrCore \\Q[\\E" + coreNamesRegex + "\\Q]\\E(?: )+Registered new searcher.*\n", coreNames.size())
                         .withStartupTimeout(startupTimeout)
         );
 
