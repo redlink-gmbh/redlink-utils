@@ -33,7 +33,7 @@ public class VindContainer extends FailureDetectingExternalResource {
 
     private final Set<String> coreNames;
 
-    private VindContainer(String image, Collection<String> coreNames, Duration startupTimeout) {
+    protected VindContainer(String image, Collection<String> coreNames, Duration startupTimeout) {
         container = new GenericContainer<>(image);
         this.coreNames = new HashSet<>(coreNames);
         this.startupTimeout = startupTimeout == null ? Duration.ofSeconds(15) : startupTimeout;

@@ -34,7 +34,7 @@ public class SolrContainer extends FailureDetectingExternalResource {
     private final String confDir;
     private final Duration startupTimeout;
 
-    private SolrContainer(String image, String coreName, String confDir, File workingDir, Duration startupTimeout) {
+    protected SolrContainer(String image, String coreName, String confDir, File workingDir, Duration startupTimeout) {
         this.coreName = coreName;
         this.confDir = confDir;
 

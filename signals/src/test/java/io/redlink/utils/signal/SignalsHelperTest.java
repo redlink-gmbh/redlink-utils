@@ -18,11 +18,12 @@ package io.redlink.utils.signal;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import org.awaitility.Awaitility;
+import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
-import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
+import sun.misc.Signal;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
@@ -54,7 +55,7 @@ public class SignalsHelperTest {
         Awaitility.await()
                 .atMost(1, TimeUnit.SECONDS)
                 .until(counter::get, Matchers.is(1));
-        assertEquals(1, counter.get());
+        assertEquals("count signal events", 1, counter.get());
     }
 
     @Test
@@ -72,25 +73,26 @@ public class SignalsHelperTest {
         testRegisterClear(signalToTest.getSigName());
     }
 
-    private void testRegisterClear(String signal) {
+    private void testRegisterClear(final String signal) {
         final AtomicInteger counter = new AtomicInteger();
 
         SignalsHelper.registerHandler((num, name) -> counter.incrementAndGet(), signal);
 
-        sun.misc.Signal.raise(new sun.misc.Signal(signal));
+        final Signal sig = new Signal(signal);
+        sun.misc.Signal.raise(sig);
 
         Awaitility.await()
                 .atMost(1, TimeUnit.SECONDS)
                 .until(counter::get, Matchers.is(1));
-        assertEquals(1, counter.get());
+        assertEquals("count signal events", 1, counter.get());
 
         SignalsHelper.clearHandler(signal);
 
         try {
-            sun.misc.Signal.raise(new sun.misc.Signal(signal));
-            fail();
+            sun.misc.Signal.raise(sig);
+            fail("signal not fired");
         } catch (IllegalArgumentException e) {
-            Assert.assertThat(e.getMessage(), Matchers.is("Unhandled signal: SIG" + signal));
+            MatcherAssert.assertThat("check error message", e.getMessage(), Matchers.is("Unhandled signal: SIG" + signal));
         }
     }
 
@@ -99,20 +101,21 @@ public class SignalsHelperTest {
 
         SignalsHelper.registerHandler((num, name) -> counter.incrementAndGet(), signal);
 
-        sun.misc.Signal.raise(new sun.misc.Signal(signal.getSigName()));
+        final Signal sig = new Signal(signal.getSigName());
+        sun.misc.Signal.raise(sig);
 
         Awaitility.await()
                 .atMost(1, TimeUnit.SECONDS)
                 .until(counter::get, Matchers.is(1));
-        assertEquals(1, counter.get());
+        assertEquals("count signal events", 1, counter.get());
 
         SignalsHelper.clearHandler(signal);
 
         try {
-            sun.misc.Signal.raise(new sun.misc.Signal(signal.getSigName()));
-            fail();
+            sun.misc.Signal.raise(sig);
+            fail("signal not fired");
         } catch (IllegalArgumentException e) {
-            Assert.assertThat(e.getMessage(), Matchers.is("Unhandled signal: SIG" + signal));
+            MatcherAssert.assertThat("check error message", e.getMessage(), Matchers.is("Unhandled signal: SIG" + signal));
         }
     }
 }
