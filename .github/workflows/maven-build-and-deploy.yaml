@@ -49,6 +49,7 @@ jobs:
           clean
           verify
           -Psonarcloud
+          -Dsonar.projectKey=io.redlink.utils:redlink-utils
           -Dsonar.skip=${{ github.actor == 'dependabot[bot]' }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
