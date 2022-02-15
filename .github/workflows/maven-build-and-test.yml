@@ -29,8 +29,7 @@ jobs:
           cache: maven
       - name: Compile & Test
         run: mvn -V -B --no-transfer-progress
-          clean
-          verify
+          clean package verify
           -Psonarcloud
           -Dsonar.projectKey=io.redlink.utils:redlink-utils
           -Dsonar.skip=${{ github.actor == 'dependabot[bot]' }}
