@@ -70,7 +70,7 @@ public class GateTest {
             f15.get(1, TimeUnit.MILLISECONDS);
             fail("The gate was broken!");
         } catch (ExecutionException e) {
-            fail("Execution-Exception");
+            fail("Execution-Exception: " + e.getMessage());
         } catch (TimeoutException e) {
             // expected
         }
@@ -78,10 +78,10 @@ public class GateTest {
 
         gate.open();
         try {
-            assertThat("F15", f15.get(1, TimeUnit.MILLISECONDS), Matchers.is(15L));
-            assertThat("F20", f20.get(1, TimeUnit.MILLISECONDS), Matchers.is(20L));
+            assertThat("F15", f15.get(10, TimeUnit.MILLISECONDS), Matchers.is(15L));
+            assertThat("F20", f20.get(10, TimeUnit.MILLISECONDS), Matchers.is(20L));
         } catch (ExecutionException | TimeoutException e) {
-            fail("Gate did not open!");
+            fail("Gate did not open: " + e.getMessage());
         }
     }
 
@@ -89,7 +89,7 @@ public class GateTest {
     public void testWithTimout() throws InterruptedException, TimeoutException {
         final Gate gate = new Gate();
 
-        final Future<Boolean> trueFuture = createWorker(gate, Duration.ofMillis(500), Boolean.TRUE);
+        final Future<Boolean> trueFuture = createWorker(gate, Duration.ofMillis(15), Boolean.TRUE);
 
         try {
             trueFuture.get(1, TimeUnit.SECONDS);
