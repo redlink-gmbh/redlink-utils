@@ -10,9 +10,10 @@ jobs:
     steps:
       - name: "Tell Dependabot to rebase PRs"
         run: |
-          gh pr list --state open --json author,url --jq 'map(select(.author.login == "dependabot")) | .[].url' \
+          gh pr list -R $REPO --state open --json author,url --jq 'map(select(.author.login == "dependabot")) | .[].url' \
               | while read -r PR_URL; do
             gh pr comment "$PR_URL" --body "@dependabot rebase"
           done
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO: ${{ github.repository }}
