@@ -1,0 +1,18 @@
+name: Rebase Dependabot PRs
+on:
+  push:
+    branches:
+      - master
+jobs:
+  dependabot-rebase:
+    name: "@dependabot rebase"
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Tell Dependabot to rebase PRs"
+        run: |
+          gh pr list --app dependabot --state open --json url --jq '.[].url' \
+              | while read -r PR_URL; do
+            gh pr comment "$PR_URL" --body "@dependabot rebase"
+          done
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

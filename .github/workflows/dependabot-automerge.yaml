@@ -1,0 +1,25 @@
+name: Dependabot auto-merge
+on: pull_request_target
+
+permissions:
+  pull-requests: write
+  contents: write
+jobs:
+  dependabot:
+    name: Enable Automerge
+    runs-on: ubuntu-latest
+    if: ${{ github.event.pull_request.user.login == 'dependabot[bot]' }}
+    steps:
+      - name: Analyze dependabot PR
+        id: dependabot-metadata
+        uses: dependabot/fetch-metadata@v1.3.0
+      - name: Enable auto-merge for minor Dependabot PRs
+        if: ${{ steps.dependabot-metadata.outputs.update-type == 'version-update:semver-patch' }}
+        run: |
+          gh pr comment --body "Enable auto-merge for patch-update of $DEPENDENCY to $NEW_VERSION"
+          gh pr merge --auto --merge "$PR_URL"
+        env:
+          PR_URL: ${{ github.event.pull_request.html_url }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          DEPENDENCY: ${{ steps.dependabot-metadata.outputs.dependency-names }}
+          NEW_VERSION: ${{ steps.dependabot-metadata.outputs.new-version }}
