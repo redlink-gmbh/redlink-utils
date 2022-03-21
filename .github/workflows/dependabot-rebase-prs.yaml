@@ -10,7 +10,7 @@ jobs:
     steps:
       - name: "Tell Dependabot to rebase PRs"
         run: |
-          gh pr list --app dependabot --state open --json url --jq '.[].url' \
+          gh pr list --state open --json author,url --jq 'map(select(.author.login == "dependabot")) | .[].url' \
               | while read -r PR_URL; do
             gh pr comment "$PR_URL" --body "@dependabot rebase"
           done
