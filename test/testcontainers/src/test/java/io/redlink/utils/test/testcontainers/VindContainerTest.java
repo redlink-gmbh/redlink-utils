@@ -28,6 +28,7 @@ import org.apache.solr.client.solrj.request.CoreAdminRequest;
 import org.apache.solr.client.solrj.response.CoreAdminResponse;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.client.solrj.response.SolrPingResponse;
+import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Assert;
 import org.junit.Test;
@@ -50,7 +51,7 @@ public class VindContainerTest {
         try {
             vindContainer.starting(description);
 
-            Assert.assertThat("core-name", vindContainer.getCoreNames(), Matchers.contains(VindContainer.VIND_CORE_NAME));
+            MatcherAssert.assertThat("core-name", vindContainer.getCoreNames(), Matchers.contains(VindContainer.VIND_CORE_NAME));
 
             validate(vindContainer, VindContainer.VIND_CORE_NAME);
         } finally {
@@ -69,9 +70,9 @@ public class VindContainerTest {
         try {
             vindContainer.starting(description);
 
-            Assert.assertThat("core-count", vindContainer.getCoreNames(), Matchers.iterableWithSize(coreNames.length + 1));
-            Assert.assertThat("core-names", vindContainer.getCoreNames(), Matchers.hasItem(VindContainer.VIND_CORE_NAME));
-            Assert.assertThat("core-names", vindContainer.getCoreNames(), Matchers.hasItems(coreNames));
+            MatcherAssert.assertThat("core-count", vindContainer.getCoreNames(), Matchers.iterableWithSize(coreNames.length + 1));
+            MatcherAssert.assertThat("core-names", vindContainer.getCoreNames(), Matchers.hasItem(VindContainer.VIND_CORE_NAME));
+            MatcherAssert.assertThat("core-names", vindContainer.getCoreNames(), Matchers.hasItems(coreNames));
 
             for (String coreName : vindContainer.getCoreNames()) {
                 validate(vindContainer, coreName);
@@ -88,16 +89,16 @@ public class VindContainerTest {
 
             final CoreAdminResponse adminResponse = CoreAdminRequest.getStatus(coreName, solrClient);
 
-            Assert.assertThat("request", adminResponse, notNullValue());
-            Assert.assertThat("server-status", adminResponse.getStatus(), is(0));
-            Assert.assertThat("start-time", adminResponse.getStartTime(coreName), lessThan(new Date()));
+            MatcherAssert.assertThat("request", adminResponse, notNullValue());
+            MatcherAssert.assertThat("server-status", adminResponse.getStatus(), is(0));
+            MatcherAssert.assertThat("start-time", adminResponse.getStartTime(coreName), lessThan(new Date()));
         } catch (SolrServerException e) {
             Assert.fail(e.getMessage());
         }
 
         try (HttpSolrClient solrClient = new HttpSolrClient.Builder(vindContainer.getCoreUrl(coreName)).build()) {
             final SolrPingResponse ping = solrClient.ping();
-            Assert.assertThat("ping", ping.getStatus(), is(0));
+            MatcherAssert.assertThat("ping", ping.getStatus(), is(0));
 
             final QueryResponse response = solrClient.query(
                     new SolrQuery("*:*")
@@ -105,9 +106,9 @@ public class VindContainerTest {
                             .setRows(0)
             );
 
-            Assert.assertThat("header", response.getHeader(), notNullValue());
-            Assert.assertThat("results", response.getResults(), notNullValue());
-            Assert.assertThat("result count", response.getResults().getNumFound(), equalTo(0L));
+            MatcherAssert.assertThat("header", response.getHeader(), notNullValue());
+            MatcherAssert.assertThat("results", response.getResults(), notNullValue());
+            MatcherAssert.assertThat("result count", response.getResults().getNumFound(), equalTo(0L));
         } catch (SolrServerException e) {
             Assert.fail(e.getMessage());
         }

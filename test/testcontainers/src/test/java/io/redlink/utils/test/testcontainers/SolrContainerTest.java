@@ -22,6 +22,7 @@ import org.apache.solr.client.solrj.request.CoreAdminRequest;
 import org.apache.solr.client.solrj.response.CoreAdminResponse;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.client.solrj.response.SolrPingResponse;
+import org.hamcrest.MatcherAssert;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.Description;
@@ -61,7 +62,7 @@ public class SolrContainerTest {
         try {
             solrContainer.starting(description);
 
-            Assert.assertThat("core-name", solrContainer.getCoreName(), is(coreName));
+            MatcherAssert.assertThat("core-name", solrContainer.getCoreName(), is(coreName));
 
             validate(solrContainer, coreName);
         } finally {
@@ -74,16 +75,16 @@ public class SolrContainerTest {
 
             final CoreAdminResponse adminResponse = CoreAdminRequest.getStatus(coreName, solrClient);
 
-            Assert.assertThat("request", adminResponse, notNullValue());
-            Assert.assertThat("server-status", adminResponse.getStatus(), is(0));
-            Assert.assertThat("start-time", adminResponse.getStartTime(coreName), lessThan(new Date()));
+            MatcherAssert.assertThat("request", adminResponse, notNullValue());
+            MatcherAssert.assertThat("server-status", adminResponse.getStatus(), is(0));
+            MatcherAssert.assertThat("start-time", adminResponse.getStartTime(coreName), lessThan(new Date()));
         } catch (SolrServerException e) {
             Assert.fail(e.getMessage());
         }
 
         try (HttpSolrClient solrClient = new HttpSolrClient.Builder(solrContainer.getCoreUrl()).build()) {
             final SolrPingResponse ping = solrClient.ping();
-            Assert.assertThat("ping", ping.getStatus(), is(0));
+            MatcherAssert.assertThat("ping", ping.getStatus(), is(0));
 
             final QueryResponse response = solrClient.query(
                     new SolrQuery("*:*")
@@ -91,9 +92,9 @@ public class SolrContainerTest {
                             .setRows(0)
             );
 
-            Assert.assertThat("header", response.getHeader(), notNullValue());
-            Assert.assertThat("results", response.getResults(), notNullValue());
-            Assert.assertThat("result count", response.getResults().getNumFound(), equalTo(0L));
+            MatcherAssert.assertThat("header", response.getHeader(), notNullValue());
+            MatcherAssert.assertThat("results", response.getResults(), notNullValue());
+            MatcherAssert.assertThat("result count", response.getResults().getNumFound(), equalTo(0L));
         } catch (SolrServerException e) {
             Assert.fail(e.getMessage());
         }

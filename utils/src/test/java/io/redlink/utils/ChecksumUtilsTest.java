@@ -55,7 +55,7 @@ public class ChecksumUtilsTest {
     }
 
     @Test
-    public void testCrc32ByteArray() throws Exception {
+    public void testCrc32ByteArray() {
         assertEquals("CRC32 mismatch", "358ad45d",
                 ChecksumUtils.crc32("Lorem Ipsum".getBytes(StandardCharsets.UTF_8)));
     }
@@ -87,7 +87,7 @@ public class ChecksumUtilsTest {
     }
 
     @Test
-    public void testAdler32ByteArray() throws Exception {
+    public void testAdler32ByteArray() {
         assertEquals("ADLER32 mismatch", "1867042e",
                 ChecksumUtils.adler32("Lorem Ipsum".getBytes(StandardCharsets.UTF_8)));
     }
