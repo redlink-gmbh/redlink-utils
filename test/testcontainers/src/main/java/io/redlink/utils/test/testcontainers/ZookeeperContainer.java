@@ -46,11 +46,11 @@ public class ZookeeperContainer extends GenericContainer<ZookeeperContainer> {
     }
 
     public String getZkConnect() {
-        return String.format("%s:%d", getContainerIpAddress(), getMappedPort(CONNECT_PORT));
+        return String.format("%s:%d", getHost(), getMappedPort(CONNECT_PORT));
     }
 
     public String getAdminUrl() {
-        return String.format("http://%s:%d/commands", getContainerIpAddress(), getMappedPort(ADMIN_PORT));
+        return String.format("http://%s:%d/commands", getHost(), getMappedPort(ADMIN_PORT));
     }
 
 

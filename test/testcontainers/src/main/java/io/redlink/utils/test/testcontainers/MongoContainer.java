@@ -18,7 +18,7 @@ package io.redlink.utils.test.testcontainers;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.wait.strategy.Wait;
 import org.testcontainers.containers.wait.strategy.WaitStrategy;
-import org.testcontainers.shaded.org.apache.commons.lang.StringUtils;
+import org.testcontainers.shaded.org.apache.commons.lang3.StringUtils;
 
 import java.util.Objects;
 import java.util.concurrent.Future;
@@ -62,7 +62,7 @@ public class MongoContainer extends GenericContainer<MongoContainer> {
     }
 
     public String getConnectionUrl() {
-        return "mongodb://" + getContainerIpAddress() + ":" + getMappedPort(MONGO_PORT)
+        return "mongodb://" + getHost() + ":" + getMappedPort(MONGO_PORT)
                 + StringUtils.defaultString(prependIfNotBlank(this.databaseName, "/"));
     }
 
