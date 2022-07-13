@@ -113,7 +113,7 @@ public class SolrContainer extends FailureDetectingExternalResource {
     }
 
     public String getSolrUrl() {
-        return String.format("http://%s:%d/solr", container.getContainerIpAddress(), container.getMappedPort(SOLR_PORT));
+        return String.format("http://%s:%d/solr", container.getHost(), container.getMappedPort(SOLR_PORT));
     }
 
     public String getCoreUrl() {

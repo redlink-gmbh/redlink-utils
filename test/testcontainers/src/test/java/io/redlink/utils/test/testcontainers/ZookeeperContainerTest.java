@@ -36,7 +36,7 @@ import org.hamcrest.TypeSafeDiagnosingMatcher;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.testcontainers.shaded.org.apache.commons.lang.StringUtils;
+import org.testcontainers.shaded.org.apache.commons.lang3.StringUtils;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertTrue;
