@@ -22,7 +22,7 @@ jobs:
       - name: Set up Java/Maven
         uses: actions/setup-java@v3
         with:
-          java-version: '11'
+          java-version: '17'
           distribution: 'temurin'
           cache: maven
       - name: Detect Version
@@ -41,7 +41,7 @@ jobs:
       - name: Set up Java/Maven
         uses: actions/setup-java@v3
         with:
-          java-version: '11'
+          java-version: '17'
           distribution: 'temurin'
           cache: maven
       - name: Compile & Test
@@ -72,7 +72,7 @@ jobs:
       - name: Set up Java/Maven
         uses: actions/setup-java@v3
         with:
-          java-version: '11'
+          java-version: '17'
           distribution: 'temurin'
           cache: 'maven'
           server-id: ossrh
