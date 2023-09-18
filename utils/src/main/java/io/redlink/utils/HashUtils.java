@@ -190,26 +190,20 @@ public final class HashUtils {
         final MessageDigest m = algorithm.createDigest();
         m.update(bytes);
         final String hash = new BigInteger(1, m.digest()).toString(16);
-        final StringBuilder sb = new StringBuilder();
-        for (int i = hash.length(); i < algorithm.getDigestLength(); i++ ) {
-            sb.append('0');
-        }
-        sb.append(hash);
-        return sb.toString();
+        return "0".repeat(Math.max(0, algorithm.getDigestLength() - hash.length())) +
+               hash;
     }
 
     private static String calcHash(InputStream input, HashAlg algorithm) throws IOException {
         try (DigestInputStream dis = wrapInputStream(input, algorithm)) {
             byte[] buff = new byte[4096];
             //noinspection StatementWithEmptyBody
-            while (dis.read(buff) > 0); // just read to get the Digest filled...
-            final String hash = new BigInteger(1, dis.getMessageDigest().digest()).toString(16);
-            final StringBuilder sb = new StringBuilder();
-            for (int i = hash.length(); i < algorithm.getDigestLength(); i++ ) {
-                sb.append('0');
+            while (dis.read(buff) > 0) {
+                // just read to get the Digest filled...
             }
-            sb.append(hash);
-            return sb.toString();
+            final String hash = new BigInteger(1, dis.getMessageDigest().digest()).toString(16);
+            return "0".repeat(Math.max(0, algorithm.getDigestLength() - hash.length())) +
+                   hash;
         }
     }
 
