@@ -13,3 +13,5 @@ updates:
     ignore:
       - dependency-name: "org.slf4j:*"
         update-types: ["version-update:semver-major"]
+      - dependency-name: "ch.qos.logback:*"
+        update-types: ["version-update:semver-minor"]
