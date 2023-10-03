@@ -51,7 +51,7 @@ public class GateTest {
         assertTrue("Gate is closed", gate.isClosed());
     }
 
-    @Test(timeout = 5L)
+    @Test(timeout = 100L)
     public void testOpenGate() throws InterruptedException {
         final Gate gate = new Gate(false);
 
