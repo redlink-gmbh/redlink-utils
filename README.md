@@ -4,7 +4,7 @@ _An assortment of useful utils_
 [![Build Status](https://github.com/redlink-gmbh/redlink-utils/actions/workflows/maven-build-and-deploy.yaml/badge.svg)](https://github.com/redlink-gmbh/redlink-utils/actions/workflows/maven-build-and-deploy.yaml)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=io.redlink.utils%3Aredlink-utils&metric=alert_status)](https://sonarcloud.io/dashboard?id=io.redlink.utils%3Aredlink-utils)
 
-[![Maven Central](https://img.shields.io/maven-central/v/io.redlink.utils/redlink-utils.png)](https://search.maven.org/#search%7Cga%7C1%7Cg%3A%22io.redlink.utils%22)
+[![Maven Central](https://img.shields.io/maven-central/v/io.redlink.utils/redlink-utils.png)](https://central.sonatype.com/namespace/io.redlink.utils)
 [![Sonatype Nexus (Snapshots)](https://img.shields.io/nexus/s/https/oss.sonatype.org/io.redlink.utils/redlink-utils.png)](https://oss.sonatype.org/#nexus-search;gav~io.redlink.utils~~~~)
 [![Javadocs](https://www.javadoc.io/badge/io.redlink.utils/redlink-utils.svg)](https://www.javadoc.io/doc/io.redlink.utils/redlink-utils)
 [![Apache 2.0 License](https://img.shields.io/github/license/redlink-gmbh/redlink-utils.svg)](https://www.apache.org/licenses/LICENSE-2.0)
