@@ -27,7 +27,7 @@ jobs:
           cache: maven
       - name: Detect Version
         id: version
-        run: mvn -B -q -N exec:exec -Dexec.executable=echo -Dexec.args='version=${project.version}' >>"$GITHUB_OUTPUT"
+        run: ./mvnw -B -q -N exec:exec -Dexec.executable=echo -Dexec.args='version=${project.version}' >>"$GITHUB_OUTPUT"
 
   build:
     name: Build and Test
@@ -44,7 +44,7 @@ jobs:
           distribution: 'temurin'
           cache: maven
       - name: Compile & Test
-        run: mvn -V -B --no-transfer-progress
+        run: ./mvnw -V -B --no-transfer-progress
           clean package verify
           -Psonarcloud
           -Dsonar.projectKey=io.redlink.utils:redlink-utils
@@ -81,7 +81,7 @@ jobs:
           gpg-passphrase: MAVEN_GPG_PASSPHRASE
 
       - name: Publish Packages
-        run: mvn -B --no-transfer-progress
+        run: ./mvnw -B --no-transfer-progress
           package javadoc:aggregate-jar deploy
           -Prelease
           -Dquick
