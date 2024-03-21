@@ -15,9 +15,11 @@
  */
 package io.redlink.utils.test.testcontainers;
 
+import java.io.IOException;
+import java.util.Date;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServerException;
-import org.apache.solr.client.solrj.impl.HttpSolrClient;
+import org.apache.solr.client.solrj.impl.Http2SolrClient;
 import org.apache.solr.client.solrj.request.CoreAdminRequest;
 import org.apache.solr.client.solrj.response.CoreAdminResponse;
 import org.apache.solr.client.solrj.response.QueryResponse;
@@ -26,9 +28,6 @@ import org.hamcrest.MatcherAssert;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.Description;
-
-import java.io.IOException;
-import java.util.Date;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
@@ -41,12 +40,12 @@ public class SolrContainerTest {
     public void testSolrContainerDefaultCore() throws IOException {
         Description description = Description.createTestDescription(SolrContainerTest.class, "default-core");
 
-        final SolrContainer solrContainer = SolrContainer.create("/solr/core-conf");
+        final SolrContainer solrContainer = SolrContainer.create("/solr7");
         try {
             solrContainer.starting(description);
             final String coreName = solrContainer.getCoreName();
 
-            validate(solrContainer, coreName);
+            validate(solrContainer, coreName, true);
         } finally {
             solrContainer.finished(description);
         }
@@ -58,20 +57,38 @@ public class SolrContainerTest {
         Description.createTestDescription(SolrContainerTest.class, "custom-core");
 
         final String coreName = "fancy";
-        final SolrContainer solrContainer = SolrContainer.create(coreName, "/solr/core-conf");
+        final SolrContainer solrContainer = SolrContainer.create(coreName, "/solr7");
         try {
             solrContainer.starting(description);
 
             MatcherAssert.assertThat("core-name", solrContainer.getCoreName(), is(coreName));
 
-            validate(solrContainer, coreName);
+            validate(solrContainer, coreName, true);
         } finally {
             solrContainer.finished(description);
         }
     }
 
-    private void validate(SolrContainer solrContainer, String coreName) throws IOException {
-        try (HttpSolrClient solrClient = new HttpSolrClient.Builder(solrContainer.getSolrUrl()).build()) {
+    @Test
+    public void testSolr9ContainerCustomCore() throws IOException {
+        Description description =
+        Description.createTestDescription(SolrContainerTest.class, "custom-core");
+
+        final String coreName = "solr9";
+        final SolrContainer solrContainer = SolrContainer.create("solr:9", coreName, "/solr9");
+        try {
+            solrContainer.starting(description);
+
+            MatcherAssert.assertThat("core-name", solrContainer.getCoreName(), is(coreName));
+
+            validate(solrContainer, coreName, false);
+        } finally {
+            solrContainer.finished(description);
+        }
+    }
+
+    private void validate(SolrContainer solrContainer, String coreName, boolean useHttp1) throws IOException {
+        try (Http2SolrClient solrClient = new Http2SolrClient.Builder(solrContainer.getSolrUrl()).useHttp1_1(useHttp1).build()) {
 
             final CoreAdminResponse adminResponse = CoreAdminRequest.getStatus(coreName, solrClient);
 
@@ -82,7 +99,7 @@ public class SolrContainerTest {
             Assert.fail(e.getMessage());
         }
 
-        try (HttpSolrClient solrClient = new HttpSolrClient.Builder(solrContainer.getCoreUrl()).build()) {
+        try (Http2SolrClient solrClient = new Http2SolrClient.Builder(solrContainer.getCoreUrl()).useHttp1_1(useHttp1).build()) {
             final SolrPingResponse ping = solrClient.ping();
             MatcherAssert.assertThat("ping", ping.getStatus(), is(0));
 

@@ -88,7 +88,7 @@ public class SolrContainer extends FailureDetectingExternalResource {
         container.withFileSystemBind(mountableConf.getAbsolutePath(), "/core-conf", BindMode.READ_ONLY);
         container.withCommand("solr-precreate", coreName, "/core-conf");
         container.waitingFor(
-                Wait.forLogMessage(".*SolrCore \\Q[" + coreName + "]\\E(?: )+Registered new searcher.*\n", 1)
+                Wait.forHttp("/solr/" + coreName + "/admin/ping")
                         .withStartupTimeout(startupTimeout)
         );
 
@@ -118,6 +118,11 @@ public class SolrContainer extends FailureDetectingExternalResource {
 
     public String getCoreUrl() {
         return String.format("%s/%s", getSolrUrl(), this.coreName);
+    }
+
+    @SuppressWarnings("java:S1452")
+    public GenericContainer<?> getContainer() {
+        return container;
     }
 
     public static SolrContainer create(String confDir) {
