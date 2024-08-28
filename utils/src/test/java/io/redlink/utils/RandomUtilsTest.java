@@ -16,31 +16,31 @@
 package io.redlink.utils;
 
 import java.util.Random;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
-public class RandomUtilsTest {
+class RandomUtilsTest {
 
     @Test
-    public void nextString() {
+    void nextString() {
         for (int i = 0; i < 50; i++) {
-            assertEquals("random string length", i, RandomUtils.nextString(i).length());
+            assertEquals(i, RandomUtils.nextString(i).length(), "random string length");
         }
     }
 
     @Test
-    public void nextStringRnd() {
+    void nextStringRnd() {
         Random rnd = new Random(42);
-        assertEquals("pre-seed random string", "6FyS", RandomUtils.nextString(rnd, 4));
-        assertEquals("pre-seed random string", "2X3wn3y0", RandomUtils.nextString(rnd, 8));
-        assertEquals("pre-seed random string", "cWWOeQNjeDWN", RandomUtils.nextString(rnd, 12));
-        assertEquals("pre-seed random string", "TN6iPQSqmhdR4Ppo", RandomUtils.nextString(rnd, 16));
-        assertEquals("pre-seed random string", "RjpBpcptlzNu6wyGvRfJZR", RandomUtils.nextString(rnd, 22));
+        assertEquals("6FyS", RandomUtils.nextString(rnd, 4), "pre-seed random string");
+        assertEquals("2X3wn3y0", RandomUtils.nextString(rnd, 8), "pre-seed random string");
+        assertEquals("cWWOeQNjeDWN", RandomUtils.nextString(rnd, 12), "pre-seed random string");
+        assertEquals("TN6iPQSqmhdR4Ppo", RandomUtils.nextString(rnd, 16), "pre-seed random string");
+        assertEquals("RjpBpcptlzNu6wyGvRfJZR", RandomUtils.nextString(rnd, 22), "pre-seed random string");
 
         for (int i = 0; i < 50; i++) {
-            assertEquals("random string length", i, RandomUtils.nextString(rnd, i).length());
+            assertEquals(i, RandomUtils.nextString(rnd, i).length(), "random string length");
         }
     }
 

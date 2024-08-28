@@ -17,99 +17,95 @@
 package io.redlink.utils;
 
 import java.nio.charset.StandardCharsets;
-import org.junit.BeforeClass;
-import org.junit.ClassRule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class ChecksumUtilsTest {
 
-    @ClassRule
-    public static TemporaryFolder temporaryFolder = new TemporaryFolder();
+class ChecksumUtilsTest {
+
+    @TempDir
+    private static Path tempDir;
 
     private static Path path;
 
-    private static File file;
-
-    @BeforeClass
-    public static void setUp() throws IOException {
-        file = temporaryFolder.newFile("ASL.txt");
-        path = file.toPath();
+    @BeforeAll
+    static void setUp() throws IOException {
+        path = tempDir.resolve("ASL.txt");
 
         Files.copy(ChecksumUtilsTest.class.getResourceAsStream("/ASL-2.0.txt"), path, StandardCopyOption.REPLACE_EXISTING);
     }
 
     @Test
-    public void testCrc32String() {
-        assertEquals("CRC32 mismatch", "358ad45d",
-                ChecksumUtils.crc32("Lorem Ipsum"));
+    void testCrc32String() {
+        assertEquals("358ad45d",
+                ChecksumUtils.crc32("Lorem Ipsum"), "CRC32 mismatch");
     }
 
     @Test
-    public void testCrc32ByteArray() {
-        assertEquals("CRC32 mismatch", "358ad45d",
-                ChecksumUtils.crc32("Lorem Ipsum".getBytes(StandardCharsets.UTF_8)));
+    void testCrc32ByteArray() {
+        assertEquals("358ad45d",
+                ChecksumUtils.crc32("Lorem Ipsum".getBytes(StandardCharsets.UTF_8)), "CRC32 mismatch");
     }
 
     @Test
-    public void testCrc32File() throws IOException {
-        assertEquals("CRC32 mismatch", "86e2b4b4",
-                ChecksumUtils.crc32(file));
+    void testCrc32File() throws IOException {
+        assertEquals("86e2b4b4",
+                ChecksumUtils.crc32(path.toFile()), "CRC32 mismatch");
     }
 
     @Test
-    public void testCrc32Path() throws IOException {
-        assertEquals("CRC32 mismatch", "86e2b4b4",
-                ChecksumUtils.crc32(path));
+    void testCrc32Path() throws IOException {
+        assertEquals("86e2b4b4",
+                ChecksumUtils.crc32(path), "CRC32 mismatch");
     }
 
     @Test
-    public void testCrc32InputStream() throws Exception {
+    void testCrc32InputStream() throws Exception {
         final InputStream stream = getClass().getResourceAsStream("/ASL-2.0.txt");
 
-        assertEquals("CRC32 mismatch", "86e2b4b4",
-                ChecksumUtils.crc32(stream));
+        assertEquals("86e2b4b4",
+                ChecksumUtils.crc32(stream), "CRC32 mismatch");
     }
 
     @Test
-    public void testAdler32String() {
-        assertEquals("ADLER32 mismatch", "1867042e",
-                ChecksumUtils.adler32("Lorem Ipsum"));
+    void testAdler32String() {
+        assertEquals("1867042e",
+                ChecksumUtils.adler32("Lorem Ipsum"), "ADLER32 mismatch");
     }
 
     @Test
-    public void testAdler32ByteArray() {
-        assertEquals("ADLER32 mismatch", "1867042e",
-                ChecksumUtils.adler32("Lorem Ipsum".getBytes(StandardCharsets.UTF_8)));
+    void testAdler32ByteArray() {
+        assertEquals("1867042e",
+                ChecksumUtils.adler32("Lorem Ipsum".getBytes(StandardCharsets.UTF_8)), "ADLER32 mismatch");
     }
 
     @Test
-    public void testAdler32File() throws IOException {
-        assertEquals("ADLER32 mismatch", "3a27ec70",
-                ChecksumUtils.adler32(file));
+    void testAdler32File() throws IOException {
+        assertEquals("3a27ec70",
+                ChecksumUtils.adler32(path.toFile()), "ADLER32 mismatch");
     }
 
     @Test
-    public void testAdler32Path() throws IOException {
-        assertEquals("ADLER32 mismatch", "3a27ec70",
-                ChecksumUtils.adler32(path));
+    void testAdler32Path() throws IOException {
+        assertEquals("3a27ec70",
+                ChecksumUtils.adler32(path), "ADLER32 mismatch");
     }
 
     @Test
-    public void testAdler32InputStream() throws Exception {
+    void testAdler32InputStream() throws Exception {
         final InputStream stream = getClass().getResourceAsStream("/ASL-2.0.txt");
 
-        assertEquals("ADLER32 mismatch", "3a27ec70",
-                ChecksumUtils.adler32(stream));
+        assertEquals("3a27ec70",
+                ChecksumUtils.adler32(stream), "ADLER32 mismatch");
     }
 
 }

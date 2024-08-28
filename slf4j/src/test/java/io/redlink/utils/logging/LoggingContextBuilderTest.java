@@ -21,21 +21,22 @@ import java.util.UUID;
 import java.util.concurrent.Callable;
 import java.util.function.Supplier;
 import org.hamcrest.CoreMatchers;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.slf4j.MDC;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 
-public class LoggingContextBuilderTest {
 
-    @Before
-    public void setUp() {
+class LoggingContextBuilderTest {
+
+    @BeforeEach
+    void setUp() {
         MDC.clear();
     }
 
     @Test
-    public void testWithMDC() {
+    void testWithMDC() {
         final String value = UUID.randomUUID().toString();
         Map<String, String> ctx = new HashMap<>();
         ctx.put("mdc", value);
@@ -49,7 +50,7 @@ public class LoggingContextBuilderTest {
     }
 
     @Test
-    public void testWrapRunnable() {
+    void testWrapRunnable() {
         final String value = UUID.randomUUID().toString();
         final String value2 = UUID.randomUUID().toString();
         MDC.put("mdc", value);
@@ -61,7 +62,7 @@ public class LoggingContextBuilderTest {
     }
 
     @Test
-    public void testCleanWrapRunnable() {
+    void testCleanWrapRunnable() {
         final String value = UUID.randomUUID().toString();
         final String value2 = UUID.randomUUID().toString();
         MDC.put("mdc", value);
@@ -73,7 +74,7 @@ public class LoggingContextBuilderTest {
     }
 
     @Test
-    public void testWrapCallable() throws Exception {
+    void testWrapCallable() throws Exception {
         final String value = UUID.randomUUID().toString();
         final String value2 = UUID.randomUUID().toString();
         MDC.put("mdc", value);
@@ -87,7 +88,7 @@ public class LoggingContextBuilderTest {
     }
 
     @Test
-    public void testWrapFunction() {
+    void testWrapFunction() {
         final String value = UUID.randomUUID().toString();
         final String value2 = UUID.randomUUID().toString();
         MDC.put("mdc", value);
@@ -102,7 +103,7 @@ public class LoggingContextBuilderTest {
     }
 
     @Test
-    public void testWrapSupplier() {
+    void testWrapSupplier() {
         final String value = UUID.randomUUID().toString();
         final String value2 = UUID.randomUUID().toString();
         MDC.put("mdc", value);
@@ -116,7 +117,7 @@ public class LoggingContextBuilderTest {
     }
 
     @Test
-    public void testWrapConsumer() {
+    void testWrapConsumer() {
         final String value = UUID.randomUUID().toString();
         final String value2 = UUID.randomUUID().toString();
         MDC.put("mdc", value);

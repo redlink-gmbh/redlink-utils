@@ -24,43 +24,44 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicBoolean;
 import org.hamcrest.Matchers;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
-public class GateTest {
+class GateTest {
 
     @Test
-    public void testStateCheck() {
+    void testStateCheck() {
         final Gate gate = new Gate();
-        assertTrue("Initial State is closed", gate.isClosed());
+        assertTrue(gate.isClosed(), "Initial State is closed");
         gate.open();
-        assertTrue("Gate is opened", gate.isOpen());
-        assertFalse("Gate is not closed", gate.isClosed());
+        assertTrue(gate.isOpen(), "Gate is opened");
+        assertFalse(gate.isClosed(), "Gate is not closed");
         gate.close();
-        assertFalse("Gate is not opened", gate.isOpen());
-        assertTrue("Gate is closed", gate.isClosed());
+        assertFalse(gate.isOpen(), "Gate is not opened");
+        assertTrue(gate.isClosed(), "Gate is closed");
 
         gate.setClosed(false);
-        assertTrue("Gate is open", gate.isOpen());
+        assertTrue(gate.isOpen(), "Gate is open");
         gate.setClosed(true);
-        assertTrue("Gate is closed", gate.isClosed());
-    }
-
-    @Test(timeout = 100L)
-    public void testOpenGate() throws InterruptedException {
-        final Gate gate = new Gate(false);
-
-        Assert.assertTrue("Gate is open", gate.tryAwait(-1, TimeUnit.MILLISECONDS));
-        Assert.assertTrue("Gate is open", gate.tryAwait(Duration.ofMillis(1).negated()));
+        assertTrue(gate.isClosed(), "Gate is closed");
     }
 
     @Test
-    public void testSimpleSync() throws InterruptedException {
+    @Timeout(100)
+    void testOpenGate() throws InterruptedException {
+        final Gate gate = new Gate(false);
+
+        assertTrue(gate.tryAwait(-1, TimeUnit.MILLISECONDS), "Gate is open");
+        assertTrue(gate.tryAwait(Duration.ofMillis(1).negated()), "Gate is open");
+    }
+
+    @Test
+    void testSimpleSync() throws InterruptedException {
         final Gate gate = new Gate(true);
 
         final Future<Long> f15 = createWorker(gate, Duration.ofSeconds(15), 15L);
@@ -86,7 +87,7 @@ public class GateTest {
     }
 
     @Test
-    public void testWithTimout() throws InterruptedException, TimeoutException {
+    void testWithTimout() throws InterruptedException, TimeoutException {
         final Gate gate = new Gate();
 
         final Future<Boolean> trueFuture = createWorker(gate, Duration.ofMillis(15), Boolean.TRUE);
@@ -100,19 +101,20 @@ public class GateTest {
     }
 
     @Test
-    public void testTryAwait() throws InterruptedException {
+    void testTryAwait() throws InterruptedException {
         final Gate gate = new Gate();
 
-        assertFalse("Gate opened", gate.tryAwait(Duration.ofMillis(5)));
-        assertFalse("Gate opened", gate.tryAwait(5, TimeUnit.MILLISECONDS));
+        assertFalse(gate.tryAwait(Duration.ofMillis(5)), "Gate opened");
+        assertFalse(gate.tryAwait(5, TimeUnit.MILLISECONDS), "Gate opened");
 
         gate.open();
-        assertTrue("Gate closed", gate.tryAwait(Duration.ofMillis(5)));
-        assertTrue("Gate closed", gate.tryAwait(5, TimeUnit.MILLISECONDS));
+        assertTrue(gate.tryAwait(Duration.ofMillis(5)), "Gate closed");
+        assertTrue(gate.tryAwait(5, TimeUnit.MILLISECONDS), "Gate closed");
     }
 
-    @Test(timeout = 100L)
-    public void testPlainAwait() throws InterruptedException {
+    @Test
+    @Timeout(100)
+    void testPlainAwait() throws InterruptedException {
         final Gate gate = new Gate();
 
         final AtomicBoolean success = new AtomicBoolean(false);
@@ -143,7 +145,7 @@ public class GateTest {
         gate.await();
         postBarrier.await();
         gate.await();
-        assertTrue("Awaited", success.get());
+        assertTrue(success.get(), "Awaited");
 
     }
 

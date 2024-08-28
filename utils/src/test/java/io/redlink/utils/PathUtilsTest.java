@@ -18,10 +18,7 @@ package io.redlink.utils;
 
 import org.apache.commons.io.IOUtils;
 import org.hamcrest.Matchers;
-import org.junit.BeforeClass;
-import org.junit.ClassRule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
+import org.junit.jupiter.api.BeforeAll;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -30,29 +27,35 @@ import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.nio.file.attribute.FileTime;
 import java.util.UUID;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
-import static org.junit.Assert.*;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  *
  */
-public class PathUtilsTest {
+class PathUtilsTest {
 
-    @ClassRule
-    public static TemporaryFolder temporaryFolder = new TemporaryFolder();
+    @TempDir
+    static Path tempDir;
 
     private static Path sourceFolder;
     private static Path sourceFile;
 
 
-    @BeforeClass
-    public static void prepareFiles() throws IOException {
-        sourceFile = temporaryFolder.newFile("ASL-2.0.txt").toPath();
+    @BeforeAll
+    static void prepareFiles() throws IOException {
+        sourceFile = tempDir.resolve("ASL-2.0.txt");
 
         Files.copy(PathUtilsTest.class.getResourceAsStream("/ASL-2.0.txt"), sourceFile, StandardCopyOption.REPLACE_EXISTING);
 
-        sourceFolder = temporaryFolder.newFolder("tree").toPath();
+        sourceFolder = tempDir.resolve("tree");
+        Files.createDirectories(sourceFolder);
 
         final Path foo = Files.createDirectories(sourceFolder.resolve("foo"));
         Files.copy(PathUtilsTest.class.getResourceAsStream("/ASL-2.0.txt"), foo.resolve("File1"));
@@ -76,36 +79,36 @@ public class PathUtilsTest {
     }
 
     @Test
-    public void testCopySingleFile() throws Exception {
-        final Path dest = temporaryFolder.newFolder("copy-single-file").toPath().resolve(UUID.randomUUID().toString());
+    void testCopySingleFile(@TempDir Path baseDir) throws Exception {
+        final Path dest = baseDir.resolve(UUID.randomUUID().toString());
         Files.createDirectories(dest.getParent());
 
         PathUtils.copy(sourceFile, dest);
 
-        assertTrue("destination not found", Files.exists(dest));
+        assertTrue(Files.exists(dest), "destination not found");
         try (
                 InputStream expected = Files.newInputStream(sourceFile);
                 InputStream real = Files.newInputStream(dest)
         ) {
-            assertTrue("content mismatch", IOUtils.contentEquals(expected, real));
+            assertTrue(IOUtils.contentEquals(expected, real), "content mismatch");
         }
 
         assertThat("mtime", Files.getLastModifiedTime(dest), Matchers.greaterThan(Files.getLastModifiedTime(sourceFile)));
     }
 
     @Test
-    public void testCopySingleFilePreservingAttrs() throws Exception {
-        final Path dest = temporaryFolder.newFolder("copy-single-file-w-attrs").toPath().resolve(UUID.randomUUID().toString());
+    void testCopySingleFilePreservingAttrs(@TempDir Path baseDir) throws Exception {
+        final Path dest = baseDir.resolve(UUID.randomUUID().toString());
         Files.createDirectories(dest.getParent());
 
         PathUtils.copy(sourceFile, dest, true);
 
-        assertTrue("destination not found", Files.exists(dest));
+        assertTrue(Files.exists(dest), "destination not found");
         try (
                 InputStream expected = Files.newInputStream(sourceFile);
                 InputStream real = Files.newInputStream(dest)
         ) {
-            assertTrue("content mismatch", IOUtils.contentEquals(expected, real));
+            assertTrue(IOUtils.contentEquals(expected, real), "content mismatch");
         }
 
         assertThat("mtime", Files.getLastModifiedTime(dest), Matchers.comparesEqualTo(Files.getLastModifiedTime(sourceFile)));
@@ -113,15 +116,13 @@ public class PathUtilsTest {
     }
 
     @Test
-    public void testCopyTree() throws Exception {
-        final Path dest = temporaryFolder.newFolder("copy-tree").toPath();
-
+    void testCopyTree(@TempDir Path dest) throws Exception {
         PathUtils.copyRecursive(sourceFolder, dest);
 
         Files.walk(sourceFolder)
                 .map(sourceFolder::relativize)
                 .map(dest::resolve)
-                .forEach(p -> assertTrue("exists " + p, Files.exists(p)));
+                .forEach(p -> assertTrue(Files.exists(p), "exists " + p));
         Files.walk(sourceFolder)
                 .filter(Files::isRegularFile)
                 .map(sourceFolder::relativize)
@@ -131,7 +132,7 @@ public class PathUtilsTest {
                             InputStream expected = PathUtilsTest.class.getResourceAsStream("/ASL-2.0.txt");
                             InputStream real = Files.newInputStream(f)
                     ) {
-                        assertTrue("content " + f, IOUtils.contentEquals(expected, real));
+                        assertTrue(IOUtils.contentEquals(expected, real), "content " + f);
                     } catch (IOException e) {
                         fail("content of " + f + " " + e.getMessage());
                     }
@@ -140,15 +141,13 @@ public class PathUtilsTest {
     }
 
     @Test
-    public void testCopyTreePreservingAttrs() throws Exception {
-        final Path dest = temporaryFolder.newFolder("copy-tree-w-attrs").toPath();
-
+    void testCopyTreePreservingAttrs(@TempDir Path dest) throws Exception {
         PathUtils.copyRecursive(sourceFolder, dest, true);
 
         Files.walk(sourceFolder)
                 .map(sourceFolder::relativize)
                 .map(dest::resolve)
-                .forEach(p -> assertTrue("exists " + p, Files.exists(p)));
+                .forEach(p -> assertTrue(Files.exists(p), "exists " + p));
         Files.walk(sourceFolder)
                         .filter(Files::isRegularFile)
                         .map(sourceFolder::relativize)
@@ -158,7 +157,7 @@ public class PathUtilsTest {
                                     InputStream expected = PathUtilsTest.class.getResourceAsStream("/ASL-2.0.txt");
                                     InputStream real = Files.newInputStream(f)
                             ) {
-                                assertTrue("content " + f, IOUtils.contentEquals(expected, real));
+                                assertTrue(IOUtils.contentEquals(expected, real), "content " + f);
                             } catch (IOException e) {
                                 fail("content of " + f + " " + e.getMessage());
                             }
@@ -167,7 +166,7 @@ public class PathUtilsTest {
                 .map(sourceFolder::relativize)
                 .forEach(p -> {
                     try {
-                        assertEquals("lastMod " + p, Files.getLastModifiedTime(sourceFolder.resolve(p)), Files.getLastModifiedTime(dest.resolve(p)));
+                        assertEquals(Files.getLastModifiedTime(sourceFolder.resolve(p)), Files.getLastModifiedTime(dest.resolve(p)), "lastMod " + p);
                     } catch (IOException e) {
                         fail(e.getMessage());
                     }
@@ -175,16 +174,14 @@ public class PathUtilsTest {
     }
 
     @Test
-    public void testDeleteRecursive() throws Exception {
-        final Path dest1 = temporaryFolder.newFolder().toPath();
-        assertTrue("source not found", Files.exists(dest1));
+    void testDeleteRecursive(@TempDir Path dest1, @TempDir Path dest2) throws Exception {
+        assertTrue(Files.exists(dest1), "source not found");
         PathUtils.deleteRecursive(dest1);
-        assertFalse("target not deleted", Files.exists(dest1));
+        assertFalse(Files.exists(dest1), "target not deleted");
 
-        final Path dest2 = temporaryFolder.newFolder().toPath();
         PathUtils.copyRecursive(sourceFolder, dest2);
-        assertTrue("source not found", Files.exists(dest2));
+        assertTrue(Files.exists(dest2), "source not found");
         PathUtils.deleteRecursive(dest2);
-        assertFalse("target not deleted", Files.exists(dest2));
+        assertFalse(Files.exists(dest2), "target not deleted");
     }
 }

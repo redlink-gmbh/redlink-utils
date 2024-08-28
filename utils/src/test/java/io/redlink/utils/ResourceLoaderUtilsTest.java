@@ -17,105 +17,104 @@
 package io.redlink.utils;
 
 import java.io.InputStream;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Arrays;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import static org.apache.commons.lang3.StringUtils.prependIfMissing;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assume.assumeNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 /**
  */
-@RunWith(Parameterized.class)
-public class ResourceLoaderUtilsTest {
+class ResourceLoaderUtilsTest {
 
-    private final String resource;
-
-    @Parameterized.Parameters(name = "{index}: \"{0}\"")
-    public static Iterable<Object[]> data() {
-        return Arrays.asList(
-                new Object[] {"/ASL-2.0.txt"},
-                new Object[] {"HashUtilsTest.class"},
-                new Object[] {"/org/junit/Test.class"}
-        );
-    }
-
-    public ResourceLoaderUtilsTest(String resource) {
-        this.resource = resource;
-    }
-
-    @Test
-    public void testGetResourceAsPath_Class() throws Exception {
-        assumeNotNull("Could not read resource the classic way",
-                ResourceLoaderUtilsTest.class.getResource(resource));
+    @ParamTest
+    void testGetResourceAsPath_Class(String resource) throws Exception {
+        assumeTrue(ResourceLoaderUtilsTest.class.getResource(resource) != null,
+                "Could not read resource the classic way");
         final Path resourceAsPath = ResourceLoaderUtils.getResourceAsPath(resource, ResourceLoaderUtilsTest.class);
-        assertNotNull("getResourceAsPath() returned null", resourceAsPath);
+        assertNotNull(resourceAsPath, "getResourceAsPath() returned null");
 
         try (
                 InputStream expected = ResourceLoaderUtilsTest.class.getResourceAsStream(resource);
                 InputStream real =Files.newInputStream(resourceAsPath)
         ) {
-            assertTrue("content differs!", IOUtils.contentEquals(expected, real));
+            assertTrue(IOUtils.contentEquals(expected, real), "content differs!");
         }
     }
 
-    @Test
-    public void testGetResourceAsPath_ClassLoader() throws Exception {
+    @ParamTest
+    void testGetResourceAsPath_ClassLoader(String rsc) throws Exception {
         final String resource;
-        if (StringUtils.startsWith(this.resource, "/")) {
-            resource = this.resource.substring(1);
+        if (StringUtils.startsWith(rsc, "/")) {
+            resource = rsc.substring(1);
         } else {
-            resource = prependIfMissing(this.resource, this.getClass().getPackage().getName().replace('.', '/') + "/");
+            resource = prependIfMissing(rsc, this.getClass().getPackage().getName().replace('.', '/') + "/");
         }
 
-        assumeNotNull("Could not read resource the classic way",
-                ClassLoader.getSystemClassLoader().getResource(resource));
+        assumeTrue(ClassLoader.getSystemClassLoader().getResource(resource) != null,
+                "Could not read resource the classic way");
 
         final Path resourceAsPath = ResourceLoaderUtils.getResourceAsPath(resource, ClassLoader.getSystemClassLoader());
-        assertNotNull("getResourceAsPath() returned null", resourceAsPath);
+        assertNotNull(resourceAsPath, "getResourceAsPath() returned null");
 
         try (
                 InputStream expected = ClassLoader.getSystemClassLoader().getResourceAsStream(resource);
                 InputStream real = Files.newInputStream(resourceAsPath)
         ) {
-            assertTrue("content differs!", IOUtils.contentEquals(expected, real));
+            assertTrue(IOUtils.contentEquals(expected, real), "content differs!");
         }
     }
 
-    @Test
-    public void testGetResourceAsPath() throws Exception {
+    @ParamTest
+    void testGetResourceAsPath(String rsc) throws Exception {
         final String resource;
-        if (StringUtils.startsWith(this.resource, "/")) {
-            resource = this.resource.substring(1);
+        if (StringUtils.startsWith(rsc, "/")) {
+            resource = rsc.substring(1);
         } else {
-            resource = prependIfMissing(this.resource, this.getClass().getPackage().getName().replace('.', '/') + "/");
+            resource = prependIfMissing(rsc, this.getClass().getPackage().getName().replace('.', '/') + "/");
         }
 
-        assumeNotNull("Could not read resource the classic way",
-                Thread.currentThread().getContextClassLoader().getResource(resource));
+        assumeTrue(Thread.currentThread().getContextClassLoader().getResource(resource) != null,
+                "Could not read resource the classic way");
 
         final Path resourceAsPath = ResourceLoaderUtils.getResourceAsPath(resource);
-        assertNotNull("getResourceAsPath() returned null", resourceAsPath);
+        assertNotNull(resourceAsPath, "getResourceAsPath() returned null");
 
         try (
                 InputStream expected = Thread.currentThread().getContextClassLoader().getResourceAsStream(resource);
                 InputStream real = Files.newInputStream(resourceAsPath)
         ) {
-            assertTrue("content differs!", IOUtils.contentEquals(expected, real));
+            assertTrue(IOUtils.contentEquals(expected, real), "content differs!");
         }
     }
 
-    @Test
-    public void testNullResource() {
-        assertNull("non-existing resource",
-                ResourceLoaderUtils.getResourceAsPath(resource + ".does-not-exist"));
+    @ParamTest
+    void testNullResource(String resource) {
+        assertNull(
+                ResourceLoaderUtils.getResourceAsPath(resource + ".does-not-exist"),
+                "non-existing resource"
+        );
     }
+
+    @ParameterizedTest(name = "{index}: \"{0}\"")
+    @ValueSource(strings = {
+            "/ASL-2.0.txt",
+            "HashUtilsTest.class",
+            "/org/apache/commons/lang3/StringUtils.class"
+    })
+    @Target({ElementType.ANNOTATION_TYPE, ElementType.METHOD})
+    @Retention(RetentionPolicy.RUNTIME)
+    @interface ParamTest {}
+
 }

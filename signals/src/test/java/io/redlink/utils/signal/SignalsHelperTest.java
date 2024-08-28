@@ -20,31 +20,21 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.awaitility.Awaitility;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
+import org.junit.jupiter.api.Assumptions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.OS;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 import sun.misc.Signal;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
-@RunWith(Parameterized.class)
 @SuppressWarnings("squid:S1191")
-public class SignalsHelperTest {
-
-    @Parameterized.Parameters(name = "SIG{0}")
-    public static Object[] data() {
-        return SignalsHelper.SIG.values();
-    }
-
-    private final SignalsHelper.SIG signalToTest;
-
-    public SignalsHelperTest(SignalsHelper.SIG signalToTest) {
-        this.signalToTest = signalToTest;
-    }
+class SignalsHelperTest {
 
     @Test
-    public void testSigUsr2() {
+    void testSigUsr2() {
         final String s = "USR2";
         final AtomicInteger counter = new AtomicInteger();
 
@@ -55,21 +45,25 @@ public class SignalsHelperTest {
         Awaitility.await()
                 .atMost(1, TimeUnit.SECONDS)
                 .until(counter::get, Matchers.is(1));
-        assertEquals("count signal events", 1, counter.get());
+        assertEquals(1, counter.get(), "count signal events");
     }
 
     @Test
-    public void testRegisterClearUsr2() {
+    void testRegisterClearUsr2() {
         testRegisterClear("USR2");
     }
 
-    @Test
-    public void testWithEnum() {
+    @ParameterizedTest
+    @EnumSource(SignalsHelper.SIG.class)
+    void testWithEnum(SignalsHelper.SIG signalToTest) {
+        assertOsSupport(signalToTest);
         testRegisterClear(signalToTest);
     }
 
-    @Test
-    public void testWithSignalName() {
+    @ParameterizedTest
+    @EnumSource(SignalsHelper.SIG.class)
+    void testWithSignalName(SignalsHelper.SIG signalToTest) {
+        assertOsSupport(signalToTest);
         testRegisterClear(signalToTest.getSigName());
     }
 
@@ -84,7 +78,7 @@ public class SignalsHelperTest {
         Awaitility.await()
                 .atMost(1, TimeUnit.SECONDS)
                 .until(counter::get, Matchers.is(1));
-        assertEquals("count signal events", 1, counter.get());
+        assertEquals(1, counter.get(), "count signal events");
 
         SignalsHelper.clearHandler(signal);
 
@@ -107,7 +101,7 @@ public class SignalsHelperTest {
         Awaitility.await()
                 .atMost(1, TimeUnit.SECONDS)
                 .until(counter::get, Matchers.is(1));
-        assertEquals("count signal events", 1, counter.get());
+        assertEquals(1, counter.get(), "count signal events");
 
         SignalsHelper.clearHandler(signal);
 
@@ -116,6 +110,25 @@ public class SignalsHelperTest {
             fail("signal not fired");
         } catch (IllegalArgumentException e) {
             MatcherAssert.assertThat("check error message", e.getMessage(), Matchers.is("Unhandled signal: SIG" + signal));
+        }
+    }
+
+    private void assertOsSupport(SignalsHelper.SIG signal) {
+        // Some Signals can't be used on Mac
+        switch (signal) {
+            case STKFLT:
+            case PWR:
+                Assumptions.assumeFalse(
+                        OS.current() == OS.MAC,
+                        String.format("Signal %s unknown on MacOS", signal)
+                );
+                break;
+            case BUS:
+                Assumptions.assumeFalse(
+                        OS.current() == OS.MAC,
+                        String.format("Signal %s already used by VM or OS", signal)
+                );
+                break;
         }
     }
 }

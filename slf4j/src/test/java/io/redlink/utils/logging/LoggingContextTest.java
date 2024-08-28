@@ -25,21 +25,21 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import org.hamcrest.CoreMatchers;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.slf4j.MDC;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 
-public class LoggingContextTest {
+class LoggingContextTest {
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         MDC.clear();
     }
 
     @Test
-    public void testLoggingContext() {
+    void testLoggingContext() {
         MDC.put("foo", "before");
 
         try (LoggingContext ignored = LoggingContext.create()) {
@@ -55,7 +55,7 @@ public class LoggingContextTest {
     }
 
     @Test
-    public void testCleanLoggingContext() {
+    void testCleanLoggingContext() {
         MDC.put("foo", "before");
 
         try (LoggingContext ignored = new LoggingContext(true)) {
@@ -72,7 +72,7 @@ public class LoggingContextTest {
     }
 
     @Test
-    public void testWithEmpty() {
+    void testWithEmpty() {
         try (LoggingContext ignored = LoggingContext.empty()) {
             assertThat("Empty Context", MDC.get("foo"), CoreMatchers.nullValue());
 
@@ -83,7 +83,7 @@ public class LoggingContextTest {
     }
 
     @Test
-    public void testWrapRunnable() {
+    void testWrapRunnable() {
         final String value = UUID.randomUUID().toString();
         MDC.put("mdc", value);
         LoggingContext.wrap(() -> {
@@ -94,7 +94,7 @@ public class LoggingContextTest {
     }
 
     @Test
-    public void testWrapCallable() throws Exception {
+    void testWrapCallable() throws Exception {
         final String value = UUID.randomUUID().toString();
         MDC.put("mdc", value);
         LoggingContext.wrap((Callable<String>) () -> {
@@ -107,7 +107,7 @@ public class LoggingContextTest {
     }
 
     @Test
-    public void testWrapFunction() {
+    void testWrapFunction() {
         final String value = UUID.randomUUID().toString();
         MDC.put("mdc", value);
         LoggingContext.wrap((String s) -> {
@@ -121,7 +121,7 @@ public class LoggingContextTest {
     }
 
     @Test
-    public void testWrapSupplier() {
+    void testWrapSupplier() {
         final String value = UUID.randomUUID().toString();
         MDC.put("mdc", value);
         LoggingContext.wrap((Supplier<String>) () -> {
@@ -134,7 +134,7 @@ public class LoggingContextTest {
     }
 
     @Test
-    public void testWrapConsumer() {
+    void testWrapConsumer() {
         final String value = UUID.randomUUID().toString();
         MDC.put("mdc", value);
         LoggingContext.wrap((String s) -> {
@@ -146,7 +146,7 @@ public class LoggingContextTest {
     }
 
     @Test
-    public void testWrapInCopyRunable() throws Throwable {
+    void testWrapInCopyRunable() throws Throwable {
         final String value = UUID.randomUUID().toString();
         final String value2 = UUID.randomUUID().toString();
 
@@ -171,7 +171,7 @@ public class LoggingContextTest {
     }
 
     @Test
-    public void testWrapInCopyCallable() throws Throwable {
+    void testWrapInCopyCallable() throws Throwable {
         final String value = UUID.randomUUID().toString();
         final String value2 = UUID.randomUUID().toString();
 
@@ -197,7 +197,7 @@ public class LoggingContextTest {
     }
 
     @Test
-    public void testWrapInCopyFunction() {
+    void testWrapInCopyFunction() {
         final String value = UUID.randomUUID().toString();
         final String value2 = UUID.randomUUID().toString();
         final String value3 = UUID.randomUUID().toString();
@@ -220,7 +220,7 @@ public class LoggingContextTest {
     }
 
     @Test
-    public void testWrapInCopySupplier() {
+    void testWrapInCopySupplier() {
         final String value = UUID.randomUUID().toString();
         final String value2 = UUID.randomUUID().toString();
         final String value3 = UUID.randomUUID().toString();
@@ -243,7 +243,7 @@ public class LoggingContextTest {
     }
 
     @Test
-    public void testWrapInCopyConsumer() {
+    void testWrapInCopyConsumer() {
         final String value = UUID.randomUUID().toString();
         final String value2 = UUID.randomUUID().toString();
         final String value3 = UUID.randomUUID().toString();
