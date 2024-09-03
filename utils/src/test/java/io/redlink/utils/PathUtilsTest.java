@@ -16,10 +16,6 @@
 
 package io.redlink.utils;
 
-import org.apache.commons.io.IOUtils;
-import org.hamcrest.Matchers;
-import org.junit.jupiter.api.BeforeAll;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
@@ -27,6 +23,11 @@ import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.nio.file.attribute.FileTime;
 import java.util.UUID;
+import java.util.function.Consumer;
+import java.util.stream.Stream;
+import org.apache.commons.io.IOUtils;
+import org.hamcrest.Matchers;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
@@ -68,14 +69,15 @@ class PathUtilsTest {
         //MacOS is not so specific on modification times, so let's trick a little.
         final long yesterday = System.currentTimeMillis() - 24 * 60 * 60 * 1000;
         Files.setLastModifiedTime(sourceFile, FileTime.fromMillis(yesterday));
-        Files.walk(sourceFolder)
+        walk(sourceFolder, s -> s
                 .forEach(f -> {
                     try {
                         Files.setLastModifiedTime(f, FileTime.fromMillis(yesterday));
                     } catch (IOException e) {
                         fail(e.getMessage());
                     }
-                });
+                })
+        );
     }
 
     @Test
@@ -119,11 +121,12 @@ class PathUtilsTest {
     void testCopyTree(@TempDir Path dest) throws Exception {
         PathUtils.copyRecursive(sourceFolder, dest);
 
-        Files.walk(sourceFolder)
+        walk(sourceFolder, s -> s
                 .map(sourceFolder::relativize)
                 .map(dest::resolve)
-                .forEach(p -> assertTrue(Files.exists(p), "exists " + p));
-        Files.walk(sourceFolder)
+                .forEach(p -> assertTrue(Files.exists(p), "exists " + p))
+        );
+        walk(sourceFolder, s -> s
                 .filter(Files::isRegularFile)
                 .map(sourceFolder::relativize)
                 .map(dest::resolve)
@@ -136,7 +139,8 @@ class PathUtilsTest {
                     } catch (IOException e) {
                         fail("content of " + f + " " + e.getMessage());
                     }
-                });
+                })
+        );
 
     }
 
@@ -144,11 +148,12 @@ class PathUtilsTest {
     void testCopyTreePreservingAttrs(@TempDir Path dest) throws Exception {
         PathUtils.copyRecursive(sourceFolder, dest, true);
 
-        Files.walk(sourceFolder)
+        walk(sourceFolder, s -> s
                 .map(sourceFolder::relativize)
                 .map(dest::resolve)
-                .forEach(p -> assertTrue(Files.exists(p), "exists " + p));
-        Files.walk(sourceFolder)
+                .forEach(p -> assertTrue(Files.exists(p), "exists " + p))
+        );
+        walk(sourceFolder, s -> s
                         .filter(Files::isRegularFile)
                         .map(sourceFolder::relativize)
                         .map(dest::resolve)
@@ -161,8 +166,9 @@ class PathUtilsTest {
                             } catch (IOException e) {
                                 fail("content of " + f + " " + e.getMessage());
                             }
-                        });
-        Files.walk(sourceFolder)
+                        })
+        );
+        walk(sourceFolder, s -> s
                 .map(sourceFolder::relativize)
                 .forEach(p -> {
                     try {
@@ -170,7 +176,8 @@ class PathUtilsTest {
                     } catch (IOException e) {
                         fail(e.getMessage());
                     }
-                });
+                })
+        );
     }
 
     @Test
@@ -183,5 +190,11 @@ class PathUtilsTest {
         assertTrue(Files.exists(dest2), "source not found");
         PathUtils.deleteRecursive(dest2);
         assertFalse(Files.exists(dest2), "target not deleted");
+    }
+
+    private static void walk(Path start, Consumer<Stream<Path>> consumer) throws IOException {
+        try (Stream<Path> stream = Files.walk(start)) {
+            consumer.accept(stream);
+        }
     }
 }

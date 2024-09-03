@@ -129,6 +129,7 @@ class SignalsHelperTest {
                         String.format("Signal %s already used by VM or OS", signal)
                 );
                 break;
+            default: //nop
         }
     }
 }

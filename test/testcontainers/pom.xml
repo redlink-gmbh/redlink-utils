@@ -30,12 +30,6 @@
 
     <dependencies>
         <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter</artifactId>
-            <scope>compile</scope>
-        </dependency>
-
-        <dependency>
             <groupId>io.redlink.utils</groupId>
             <artifactId>utils</artifactId>
             <version>${project.version}</version> <!-- the 1.x releases to have a bug that breaks SolrContainer -->
