@@ -226,6 +226,7 @@
                     <version>3.10.0</version>
                     <configuration>
                         <source>${java.version}</source>
+                        <release>${java.version}</release>
                     </configuration>
                 </plugin>
                 <plugin>

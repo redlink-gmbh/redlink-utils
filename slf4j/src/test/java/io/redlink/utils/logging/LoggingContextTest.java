@@ -205,7 +205,7 @@ class LoggingContextTest {
         MDC.put("mdc", value);
         try (LoggingContext ctx = LoggingContext.create()) {
             MDC.put("mdc", value2);
-            final Function<String, String> function = ctx.wrapInCopy((name) -> {
+            final Function<String, String> function = ctx.wrapInCopy((String name) -> {
                 assertThat(MDC.get("mdc"), CoreMatchers.is(value2));
                 MDC.put("mdc", UUID.randomUUID().toString());
                 return "hello " + name;
