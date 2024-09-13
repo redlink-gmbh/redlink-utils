@@ -50,7 +50,7 @@ public class ZookeeperContainerTest {
         try (ZookeeperContainer zkContainer = new ZookeeperContainer()) {
             zkContainer.start();
 
-            try (Socket s = new Socket(zkContainer.getContainerIpAddress(), zkContainer.getMappedPort(ZookeeperContainer.CONNECT_PORT))) {
+            try (Socket s = new Socket(zkContainer.getHost(), zkContainer.getMappedPort(ZookeeperContainer.CONNECT_PORT))) {
                 s.setKeepAlive(true);
 
                 try (OutputStream os = s.getOutputStream()) {

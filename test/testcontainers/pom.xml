@@ -30,12 +30,6 @@
 
     <dependencies>
         <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <scope>compile</scope>
-        </dependency>
-
-        <dependency>
             <groupId>io.redlink.utils</groupId>
             <artifactId>utils</artifactId>
             <version>${project.version}</version> <!-- the 1.x releases to have a bug that breaks SolrContainer -->
@@ -47,6 +41,12 @@
             <scope>compile</scope>
         </dependency>
 
+        <dependency>
+            <groupId>org.junit.vintage</groupId>
+            <artifactId>junit-vintage-engine</artifactId>
+            <version>${junit.version}</version>
+            <scope>test</scope>
+        </dependency>
         <dependency>
             <groupId>org.mongodb</groupId>
             <artifactId>mongodb-driver-sync</artifactId>

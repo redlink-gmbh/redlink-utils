@@ -18,12 +18,11 @@ package io.redlink.utils.test.testcontainers;
 
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Date;
-import java.util.List;
+import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServerException;
-import org.apache.solr.client.solrj.impl.HttpSolrClient;
+import org.apache.solr.client.solrj.impl.HttpJdkSolrClient;
 import org.apache.solr.client.solrj.request.CoreAdminRequest;
 import org.apache.solr.client.solrj.response.CoreAdminResponse;
 import org.apache.solr.client.solrj.response.QueryResponse;
@@ -38,7 +37,6 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.lessThan;
 import static org.hamcrest.Matchers.notNullValue;
-import static org.junit.Assert.*;
 
 public class VindContainerTest {
 
@@ -85,7 +83,7 @@ public class VindContainerTest {
 
 
     private void validate(VindContainer vindContainer, String coreName) throws IOException {
-        try (HttpSolrClient solrClient = new HttpSolrClient.Builder(vindContainer.getSolrUrl()).build()) {
+        try (SolrClient solrClient = new HttpJdkSolrClient.Builder(vindContainer.getSolrUrl()).build()) {
 
             final CoreAdminResponse adminResponse = CoreAdminRequest.getStatus(coreName, solrClient);
 
@@ -96,7 +94,7 @@ public class VindContainerTest {
             Assert.fail(e.getMessage());
         }
 
-        try (HttpSolrClient solrClient = new HttpSolrClient.Builder(vindContainer.getCoreUrl(coreName)).build()) {
+        try (SolrClient solrClient = new HttpJdkSolrClient.Builder(vindContainer.getCoreUrl(coreName)).build()) {
             final SolrPingResponse ping = solrClient.ping();
             MatcherAssert.assertThat("ping", ping.getStatus(), is(0));
 
