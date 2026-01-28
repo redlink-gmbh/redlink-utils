@@ -15,11 +15,13 @@
  */
 package io.redlink.utils.signal;
 
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import org.awaitility.Awaitility;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
+import org.junit.Assume;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -32,6 +34,9 @@ import static org.junit.Assert.fail;
 @SuppressWarnings("squid:S1191")
 public class SignalsHelperTest {
 
+    private static final Set<SignalsHelper.SIG> MACOS_UNSUPPORTED =
+            Set.of(SignalsHelper.SIG.BUS, SignalsHelper.SIG.STKFLT, SignalsHelper.SIG.PWR);
+
     @Parameterized.Parameters(name = "SIG{0}")
     public static Object[] data() {
         return SignalsHelper.SIG.values();
@@ -41,6 +46,11 @@ public class SignalsHelperTest {
 
     public SignalsHelperTest(SignalsHelper.SIG signalToTest) {
         this.signalToTest = signalToTest;
+
+        if (MACOS_UNSUPPORTED.contains(signalToTest)) {
+            Assume.assumeFalse("Signal " + signalToTest + " not supported on MacOS", System.getProperty("os.name").toLowerCase().contains("mac"));
+        }
+
     }
 
     @Test

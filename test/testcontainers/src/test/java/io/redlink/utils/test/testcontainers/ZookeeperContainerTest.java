@@ -33,7 +33,9 @@ import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.Matchers;
 import org.hamcrest.TypeSafeDiagnosingMatcher;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.Timeout;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testcontainers.shaded.org.apache.commons.lang3.StringUtils;
@@ -45,12 +47,15 @@ public class ZookeeperContainerTest {
 
     private static final Logger LOG = LoggerFactory.getLogger(ZookeeperContainerTest.class);
 
+    @Rule
+    public final Timeout globalTimeout = Timeout.seconds(60);
+
     @Test
     public void testRUOK() throws IOException {
         try (ZookeeperContainer zkContainer = new ZookeeperContainer()) {
             zkContainer.start();
 
-            try (Socket s = new Socket(zkContainer.getContainerIpAddress(), zkContainer.getMappedPort(ZookeeperContainer.CONNECT_PORT))) {
+            try (Socket s = new Socket(zkContainer.getHost(), zkContainer.getMappedPort(ZookeeperContainer.CONNECT_PORT))) {
                 s.setKeepAlive(true);
 
                 try (OutputStream os = s.getOutputStream()) {

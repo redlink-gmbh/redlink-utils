@@ -31,7 +31,9 @@ import org.apache.solr.client.solrj.response.SolrPingResponse;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Assert;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.Timeout;
 import org.junit.runner.Description;
 
 import static org.hamcrest.Matchers.equalTo;
@@ -41,6 +43,9 @@ import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.*;
 
 public class VindContainerTest {
+
+    @Rule
+    public final Timeout globalTimeout = Timeout.seconds(60);
 
     @Test
     public void testDefaultVindConfiguration() throws IOException {
