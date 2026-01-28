@@ -26,7 +26,9 @@ import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.client.solrj.response.SolrPingResponse;
 import org.hamcrest.MatcherAssert;
 import org.junit.Assert;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.Timeout;
 import org.junit.runner.Description;
 
 import static org.hamcrest.Matchers.equalTo;
@@ -35,6 +37,9 @@ import static org.hamcrest.Matchers.lessThan;
 import static org.hamcrest.Matchers.notNullValue;
 
 public class SolrContainerTest {
+
+    @Rule
+    public final Timeout globalTimeout = Timeout.seconds(60);
 
     @Test
     public void testSolrContainerDefaultCore() throws IOException {
