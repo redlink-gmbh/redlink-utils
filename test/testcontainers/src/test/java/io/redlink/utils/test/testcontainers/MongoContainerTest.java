@@ -22,12 +22,17 @@ import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoDatabase;
 import org.bson.Document;
 import org.hamcrest.Matchers;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.Timeout;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
 
 public class MongoContainerTest {
+
+    @Rule
+    public final Timeout globalTimeout = Timeout.seconds(60);
 
 
     @Test
