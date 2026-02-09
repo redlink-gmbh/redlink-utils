@@ -21,7 +21,7 @@
     <parent>
         <groupId>io.redlink.utils</groupId>
         <artifactId>redlink-utils</artifactId>
-        <version>3.4.0-SNAPSHOT</version>
+        <version>3.4.0</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
 
