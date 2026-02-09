@@ -27,6 +27,7 @@ import java.net.Socket;
 import java.net.URL;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
+import org.apache.commons.lang3.Strings;
 import org.apache.zookeeper.Watcher;
 import org.apache.zookeeper.ZooKeeper;
 import org.hamcrest.Description;
@@ -38,7 +39,6 @@ import org.junit.Test;
 import org.junit.rules.Timeout;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.testcontainers.shaded.org.apache.commons.lang3.StringUtils;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertTrue;
@@ -141,7 +141,7 @@ public class ZookeeperContainerTest {
                         .appendValue(item.textValue());
 
                 return item.getNodeType() == JsonNodeType.STRING &&
-                        StringUtils.equals(item.asText(), text);
+                        Strings.CS.equals(item.asText(), text);
             }
         };
     }

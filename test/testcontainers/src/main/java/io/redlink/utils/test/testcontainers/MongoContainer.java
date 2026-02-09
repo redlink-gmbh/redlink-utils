@@ -15,10 +15,11 @@
  */
 package io.redlink.utils.test.testcontainers;
 
+import java.util.Map;
+import org.apache.commons.lang3.StringUtils;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.wait.strategy.Wait;
 import org.testcontainers.containers.wait.strategy.WaitStrategy;
-import org.testcontainers.shaded.org.apache.commons.lang3.StringUtils;
 
 import java.util.Objects;
 import java.util.concurrent.Future;
@@ -48,7 +49,10 @@ public class MongoContainer extends GenericContainer<MongoContainer> {
     protected void configure() {
         super.configure();
 
-        addExposedPort(MONGO_PORT);
+        this.addExposedPort(MONGO_PORT);
+        this.withTmpFs(Map.of(
+                "/data/db", "rw"
+        ));
     }
 
     public MongoContainer withDatabaseName(final String databaseName) {
