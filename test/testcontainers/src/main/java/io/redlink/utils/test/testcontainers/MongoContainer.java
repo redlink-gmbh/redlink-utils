@@ -19,7 +19,6 @@ import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.wait.strategy.Wait;
-import org.testcontainers.containers.wait.strategy.WaitStrategy;
 
 import java.util.Objects;
 import java.util.concurrent.Future;
@@ -27,7 +26,7 @@ import java.util.concurrent.Future;
 public class MongoContainer extends GenericContainer<MongoContainer> {
 
     private static final String DEFAULT_IMAGE = "mongo";
-    private static final String DEFAULT_TAG = "3.6";
+    private static final String DEFAULT_TAG = "latest";
 
     private static final Integer MONGO_PORT = 27017;
 
@@ -53,16 +52,14 @@ public class MongoContainer extends GenericContainer<MongoContainer> {
         this.withTmpFs(Map.of(
                 "/data/db", "rw"
         ));
+        this.waitingFor(
+                Wait.forLogMessage(".*[Ww]aiting for connections.*", 1)
+        );
     }
 
     public MongoContainer withDatabaseName(final String databaseName) {
         this.databaseName = databaseName;
         return self();
-    }
-
-    @Override
-    protected WaitStrategy getWaitStrategy() {
-        return Wait.forLogMessage(".*waiting for connections on port.*\n", 1);
     }
 
     public String getConnectionUrl() {
