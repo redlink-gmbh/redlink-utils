@@ -27,11 +27,10 @@ import org.junit.runner.Description;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testcontainers.containers.BindMode;
-import org.testcontainers.containers.FailureDetectingExternalResource;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.wait.strategy.Wait;
 
-public class SolrContainer extends FailureDetectingExternalResource {
+public class SolrContainer extends TestContainerRule {
     
     private static final Logger LOG = LoggerFactory.getLogger(SolrContainer.class);
 
