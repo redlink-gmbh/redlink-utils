@@ -16,6 +16,7 @@
 
 package io.redlink.utils.test.testcontainers;
 
+import java.util.Map;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.wait.strategy.Wait;
 
@@ -43,6 +44,11 @@ public class ZookeeperContainer extends GenericContainer<ZookeeperContainer> {
         waitStrategy = Wait.forLogMessage(".*binding to port .*:" + CONNECT_PORT + "\n", 1);
         addExposedPorts(CONNECT_PORT, ADMIN_PORT);
         addEnv("ZOO_4LW_COMMANDS_WHITELIST", String.join(",", FOUR_LETTER_COMMANDS));
+        this.withTmpFs(Map.of(
+                "/data", "rw",
+                "/datalog", "rw",
+                "/logs", "rw"
+        ));
     }
 
     public String getZkConnect() {
