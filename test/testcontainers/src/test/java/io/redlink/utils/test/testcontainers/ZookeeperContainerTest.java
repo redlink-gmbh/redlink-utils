@@ -24,7 +24,10 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.Socket;
-import java.net.URL;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import org.apache.commons.lang3.Strings;
@@ -95,10 +98,18 @@ public class ZookeeperContainerTest {
         try (ZookeeperContainer zkContainer = new ZookeeperContainer()) {
             zkContainer.start();
 
-            final JsonNode json = new ObjectMapper().readTree(new URL(zkContainer.getAdminUrl() + "/ruok"));
+            final HttpClient httpClient = HttpClient.newHttpClient();
+            final HttpRequest request = HttpRequest
+                    .newBuilder(URI.create(zkContainer.getAdminUrl() + "/ruok"))
+                    .build();
+            final HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+            final JsonNode json = new ObjectMapper().readTree(response.body());
 
             assertThat("command", json.get("command"), isTextNode("ruok"));
             assertThat("error", json.get("error"), isNullNode());
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw new IOException("Interrupted while talking to Zookeeper", e);
         }
     }
 
