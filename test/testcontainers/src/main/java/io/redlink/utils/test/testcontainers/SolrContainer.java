@@ -21,6 +21,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.time.Duration;
+import java.util.Map;
 import org.junit.Assert;
 import org.junit.rules.TemporaryFolder;
 import org.junit.runner.Description;
@@ -85,6 +86,11 @@ public class SolrContainer extends TestContainerRule {
 
         container.addExposedPort(SOLR_PORT);
         container.withFileSystemBind(mountableConf.getAbsolutePath(), "/core-conf", BindMode.READ_ONLY);
+        container.withTmpFs(Map.of(
+                "/tmp", "rw",
+                "/var/solr", "rw,uid=8983,gid=8983",
+                "/opt/solr/server/solr/mycores", "rw,uid=8983,gid=8983"
+        ));
         container.withCommand("solr-precreate", coreName, "/core-conf");
         container.waitingFor(
                 Wait.forHttp("/solr/" + coreName + "/admin/ping")
